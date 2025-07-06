@@ -8,6 +8,7 @@ import {
 	PenTool,
 	Volume2,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const categories = [
@@ -102,9 +103,11 @@ export function CategoriesSection() {
 								className="group shadow-md hover:shadow-xl border-0 overflow-hidden transition-all duration-300"
 							>
 								<div className="relative">
-									<img
+									<Image
 										src={category.image}
 										alt={category.name}
+										width={1000}
+										height={1000}
 										className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
 									/>
 									<div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />

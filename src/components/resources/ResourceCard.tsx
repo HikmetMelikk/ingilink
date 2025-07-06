@@ -1,7 +1,8 @@
-import Link from "next/link";
-import { Star, Eye, Download, Heart, User, Calendar } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Calendar, Download, Eye, Heart, Star, User } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 interface Resource {
 	id: number;
@@ -27,15 +28,15 @@ interface ResourceCardProps {
 	onToggleFavorite?: (id: number) => void;
 }
 
-export function ResourceCard({ 
-	resource, 
-	viewMode = "grid", 
-	onToggleFavorite 
+export function ResourceCard({
+	resource,
+	viewMode = "grid",
+	onToggleFavorite,
 }: ResourceCardProps) {
 	const renderStars = (rating: number) => {
 		return Array.from({ length: 5 }, (_, i) => (
 			<Star
-				key={i}
+				key={`${i}-${rating}`}
 				className={`w-4 h-4 ${
 					i < Math.floor(rating)
 						? "fill-yellow-400 text-yellow-400"
@@ -59,13 +60,17 @@ export function ResourceCard({
 				viewMode === "list" ? "flex" : ""
 			}`}
 		>
-			<div className={`relative overflow-hidden ${
-				viewMode === "list" ? "w-48 flex-shrink-0" : ""
-			}`}>
+			<div
+				className={`relative overflow-hidden ${
+					viewMode === "list" ? "w-48 flex-shrink-0" : ""
+				}`}
+			>
 				<Link href={`/resources/${resource.id}`}>
-					<img
+					<Image
 						src={resource.thumbnail}
 						alt={resource.title}
+						width={1000}
+						height={1000}
 						className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
 							viewMode === "list" ? "w-full h-full" : "w-full h-48"
 						}`}
@@ -97,11 +102,11 @@ export function ResourceCard({
 				<div className="flex justify-between items-start mb-3">
 					<div className="flex-1">
 						<Link href={`/resources/${resource.id}`}>
-							<h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+							<h3 className="mb-2 font-semibold group-hover:text-blue-600 text-lg line-clamp-2 transition-colors">
 								{resource.title}
 							</h3>
 						</Link>
-						<p className="text-gray-600 text-sm line-clamp-2 mb-3">
+						<p className="mb-3 text-gray-600 text-sm line-clamp-2">
 							{resource.description}
 						</p>
 					</div>
@@ -116,16 +121,12 @@ export function ResourceCard({
 					</span>
 				</div>
 
-				<div className="flex items-center justify-between mb-4 text-sm text-gray-500">
+				<div className="flex justify-between items-center mb-4 text-gray-500 text-sm">
 					<div className="flex items-center gap-4">
 						<div className="flex items-center">
 							{renderStars(resource.rating)}
-							<span className="ml-1 font-medium">
-								{resource.rating}
-							</span>
-							<span className="ml-1">
-								({resource.ratingCount})
-							</span>
+							<span className="ml-1 font-medium">{resource.rating}</span>
+							<span className="ml-1">({resource.ratingCount})</span>
 						</div>
 						<div className="flex items-center">
 							<Eye className="mr-1 w-4 h-4" />
@@ -134,8 +135,8 @@ export function ResourceCard({
 					</div>
 				</div>
 
-				<div className="flex items-center justify-between">
-					<div className="flex items-center text-sm text-gray-600">
+				<div className="flex justify-between items-center">
+					<div className="flex items-center text-gray-600 text-sm">
 						<User className="mr-1 w-4 h-4" />
 						<span>{resource.author}</span>
 					</div>

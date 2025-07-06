@@ -3,6 +3,7 @@ import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, BookOpen, Globe, Heart, Target, Users } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 const teamMembers = [
@@ -136,9 +137,11 @@ export default function AboutPage() {
 								</div>
 							</div>
 							<div className="relative">
-								<img
+								<Image
 									src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
 									alt="İngilizce öğrenme"
+									width={100}
+									height={100}
 									className="shadow-xl rounded-lg"
 								/>
 								<div className="-bottom-6 -left-6 absolute bg-blue-600 shadow-lg p-6 rounded-lg text-white">
@@ -233,9 +236,11 @@ export default function AboutPage() {
 									className="shadow-md hover:shadow-lg border-0 text-center transition-shadow"
 								>
 									<CardContent className="p-6">
-										<img
+										<Image
 											src={member.image}
 											alt={member.name}
+											width={100}
+											height={100}
 											className="mx-auto mb-4 rounded-full w-24 h-24 object-cover"
 										/>
 										<h3 className="mb-1 font-semibold text-gray-900 text-xl">

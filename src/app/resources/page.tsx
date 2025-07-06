@@ -20,14 +20,16 @@ import {
 	User,
 	X,
 } from "lucide-react";
-import { useState, useEffect, useMemo } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
 // Mock data - gerçek uygulamada API'den gelecek
 const mockResources = [
 	{
 		id: 1,
 		title: "Advanced English Grammar Guide",
-		description: "Comprehensive guide covering all advanced grammar topics with practical examples and exercises.",
+		description:
+			"Comprehensive guide covering all advanced grammar topics with practical examples and exercises.",
 		author: "Sarah Johnson",
 		category: "Grammar",
 		difficulty: "Advanced",
@@ -37,14 +39,16 @@ const mockResources = [
 		views: 1250,
 		downloads: 890,
 		publishDate: "2024-01-15",
-		thumbnail: "https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["grammar", "advanced", "exercises"],
 		isFavorite: false,
 	},
 	{
 		id: 2,
 		title: "Business English Vocabulary",
-		description: "Essential vocabulary for professional communication in business environments.",
+		description:
+			"Essential vocabulary for professional communication in business environments.",
 		author: "Michael Chen",
 		category: "Vocabulary",
 		difficulty: "Intermediate",
@@ -54,14 +58,16 @@ const mockResources = [
 		views: 890,
 		downloads: 650,
 		publishDate: "2024-01-10",
-		thumbnail: "https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["business", "vocabulary", "professional"],
 		isFavorite: true,
 	},
 	{
 		id: 3,
 		title: "IELTS Listening Practice Tests",
-		description: "Complete set of IELTS listening practice tests with detailed explanations.",
+		description:
+			"Complete set of IELTS listening practice tests with detailed explanations.",
 		author: "Emma Wilson",
 		category: "Listening",
 		difficulty: "Intermediate",
@@ -71,14 +77,16 @@ const mockResources = [
 		views: 2100,
 		downloads: 1200,
 		publishDate: "2024-01-08",
-		thumbnail: "https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["ielts", "listening", "practice"],
 		isFavorite: false,
 	},
 	{
 		id: 4,
 		title: "English Pronunciation Masterclass",
-		description: "Master English pronunciation with phonetic exercises and audio examples.",
+		description:
+			"Master English pronunciation with phonetic exercises and audio examples.",
 		author: "David Brown",
 		category: "Speaking",
 		difficulty: "Beginner",
@@ -88,14 +96,16 @@ const mockResources = [
 		views: 1680,
 		downloads: 980,
 		publishDate: "2024-01-05",
-		thumbnail: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["pronunciation", "speaking", "phonetics"],
 		isFavorite: false,
 	},
 	{
 		id: 5,
 		title: "Academic Writing Essentials",
-		description: "Learn the fundamentals of academic writing for essays, reports, and research papers.",
+		description:
+			"Learn the fundamentals of academic writing for essays, reports, and research papers.",
 		author: "Dr. Lisa Anderson",
 		category: "Writing",
 		difficulty: "Advanced",
@@ -105,14 +115,16 @@ const mockResources = [
 		views: 950,
 		downloads: 720,
 		publishDate: "2024-01-03",
-		thumbnail: "https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/3184639/pexels-photo-3184639.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["academic", "writing", "essays"],
 		isFavorite: true,
 	},
 	{
 		id: 6,
 		title: "Daily English Conversations",
-		description: "Common English conversations for everyday situations with native speakers.",
+		description:
+			"Common English conversations for everyday situations with native speakers.",
 		author: "Jennifer Lee",
 		category: "Speaking",
 		difficulty: "Beginner",
@@ -122,13 +134,22 @@ const mockResources = [
 		views: 1420,
 		downloads: 850,
 		publishDate: "2024-01-01",
-		thumbnail: "https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400",
+		thumbnail:
+			"https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=400",
 		tags: ["conversation", "daily", "beginner"],
 		isFavorite: false,
 	},
 ];
 
-const categories = ["Tümü", "Grammar", "Vocabulary", "Listening", "Speaking", "Writing", "Reading"];
+const categories = [
+	"Tümü",
+	"Grammar",
+	"Vocabulary",
+	"Listening",
+	"Speaking",
+	"Writing",
+	"Reading",
+];
 const difficulties = ["Tümü", "Beginner", "Intermediate", "Advanced"];
 const contentTypes = ["Tümü", "PDF", "Video", "Audio", "Article", "Test"];
 const sortOptions = [
@@ -171,66 +192,88 @@ export default function ResourcesPage() {
 	const itemsPerPage = 12;
 
 	// Filtrelenmiş ve sıralanmış kaynaklar
-	const filteredResources = useMemo(() => {
-		let filtered = mockResources.filter((resource) => {
-			const matchesSearch = 
-				resource.title.toLowerCase().includes(filters.search.toLowerCase()) ||
-				resource.description.toLowerCase().includes(filters.search.toLowerCase()) ||
-				resource.tags.some(tag => tag.toLowerCase().includes(filters.search.toLowerCase()));
-			
-			const matchesCategory = filters.category === "Tümü" || resource.category === filters.category;
-			const matchesDifficulty = filters.difficulty === "Tümü" || resource.difficulty === filters.difficulty;
-			const matchesContentType = filters.contentType === "Tümü" || resource.contentType === filters.contentType;
-			const matchesAuthor = !filters.author || resource.author.toLowerCase().includes(filters.author.toLowerCase());
-			const matchesRating = resource.rating >= filters.minRating;
-			
-			let matchesDate = true;
-			if (filters.dateFrom) {
-				matchesDate = matchesDate && new Date(resource.publishDate) >= new Date(filters.dateFrom);
-			}
-			if (filters.dateTo) {
-				matchesDate = matchesDate && new Date(resource.publishDate) <= new Date(filters.dateTo);
-			}
+	const filteredResources = mockResources.filter((resource) => {
+		const matchesSearch =
+			resource.title.toLowerCase().includes(filters.search.toLowerCase()) ||
+			resource.description
+				.toLowerCase()
+				.includes(filters.search.toLowerCase()) ||
+			resource.tags.some((tag) =>
+				tag.toLowerCase().includes(filters.search.toLowerCase()),
+			);
 
-			return matchesSearch && matchesCategory && matchesDifficulty && 
-				   matchesContentType && matchesAuthor && matchesRating && matchesDate;
-		});
+		const matchesCategory =
+			filters.category === "Tümü" || resource.category === filters.category;
+		const matchesDifficulty =
+			filters.difficulty === "Tümü" ||
+			resource.difficulty === filters.difficulty;
+		const matchesContentType =
+			filters.contentType === "Tümü" ||
+			resource.contentType === filters.contentType;
+		const matchesAuthor =
+			!filters.author ||
+			resource.author.toLowerCase().includes(filters.author.toLowerCase());
+		const matchesRating = resource.rating >= filters.minRating;
 
-		// Sıralama
-		filtered.sort((a, b) => {
-			switch (filters.sortBy) {
-				case "popular":
-					return b.views - a.views;
-				case "rating":
-					return b.rating - a.rating;
-				case "newest":
-					return new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime();
-				case "oldest":
-					return new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime();
-				case "title":
-					return a.title.localeCompare(b.title);
-				default:
-					return 0;
-			}
-		});
+		let matchesDate = true;
+		if (filters.dateFrom) {
+			matchesDate =
+				matchesDate &&
+				new Date(resource.publishDate) >= new Date(filters.dateFrom);
+		}
+		if (filters.dateTo) {
+			matchesDate =
+				matchesDate &&
+				new Date(resource.publishDate) <= new Date(filters.dateTo);
+		}
 
-		return filtered;
-	}, [filters]);
+		return (
+			matchesSearch &&
+			matchesCategory &&
+			matchesDifficulty &&
+			matchesContentType &&
+			matchesAuthor &&
+			matchesRating &&
+			matchesDate
+		);
+	});
+
+	// Sıralama
+	filteredResources.sort((a, b) => {
+		switch (filters.sortBy) {
+			case "popular":
+				return b.views - a.views;
+			case "rating":
+				return b.rating - a.rating;
+			case "newest":
+				return (
+					new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+				);
+			case "oldest":
+				return (
+					new Date(a.publishDate).getTime() - new Date(b.publishDate).getTime()
+				);
+			case "title":
+				return a.title.localeCompare(b.title);
+			default:
+				return 0;
+		}
+	});
 
 	// Sayfalama
 	const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
 	const paginatedResources = filteredResources.slice(
 		(currentPage - 1) * itemsPerPage,
-		currentPage * itemsPerPage
+		currentPage * itemsPerPage,
 	);
 
 	// Filtre değişikliklerinde sayfa 1'e dön
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [filters]);
+	}, []);
 
 	const handleFilterChange = (key: keyof Filters, value: string | number) => {
-		setFilters(prev => ({ ...prev, [key]: value }));
+		setFilters((prev) => ({ ...prev, [key]: value }));
 	};
 
 	const clearFilters = () => {
@@ -248,7 +291,12 @@ export default function ResourcesPage() {
 	};
 
 	const hasActiveFilters = Object.entries(filters).some(([key, value]) => {
-		if (key === "search" || key === "author" || key === "dateFrom" || key === "dateTo") {
+		if (
+			key === "search" ||
+			key === "author" ||
+			key === "dateFrom" ||
+			key === "dateTo"
+		) {
 			return value !== "";
 		}
 		if (key === "minRating") {
@@ -297,7 +345,8 @@ export default function ResourcesPage() {
 							İngilizce Öğrenme Kaynakları
 						</h1>
 						<p className="text-gray-600 text-lg">
-							Binlerce kaliteli kaynak arasından ihtiyacınıza uygun olanları keşfedin
+							Binlerce kaliteli kaynak arasından ihtiyacınıza uygun olanları
+							keşfedin
 						</p>
 					</div>
 
@@ -320,7 +369,7 @@ export default function ResourcesPage() {
 								<select
 									value={filters.sortBy}
 									onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-									className="border-gray-300 bg-white px-4 py-3 border rounded-md focus:border-blue-500 focus:ring-2 focus:ring-blue-200 text-sm"
+									className="bg-white px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-md focus:ring-2 focus:ring-blue-200 text-sm"
 								>
 									{sortOptions.map((option) => (
 										<option key={option.value} value={option.value}>
@@ -358,14 +407,14 @@ export default function ResourcesPage() {
 									<Filter className="mr-2 w-4 h-4" />
 									Filtreler
 									{hasActiveFilters && (
-										<span className="ml-2 bg-blue-500 rounded-full w-2 h-2"></span>
+										<span className="bg-blue-500 ml-2 rounded-full w-2 h-2" />
 									)}
 								</Button>
 							</div>
 						</div>
 
 						{/* Results Info */}
-						<div className="flex justify-between items-center text-sm text-gray-600">
+						<div className="flex justify-between items-center text-gray-600 text-sm">
 							<span>
 								{filteredResources.length} kaynak bulundu
 								{hasActiveFilters && " (filtrelenmiş)"}
@@ -387,21 +436,27 @@ export default function ResourcesPage() {
 					<div className="flex gap-8">
 						{/* Filters Sidebar */}
 						{showFilters && (
-							<div className="lg:block hidden w-80">
-								<Card className="sticky top-8">
+							<div className="hidden lg:block w-80">
+								<Card className="top-8 sticky">
 									<CardContent className="p-6">
 										<h3 className="mb-6 font-semibold text-lg">Filtreler</h3>
 
 										{/* Category Filter */}
 										<div className="mb-6">
-											<Label className="mb-3 block font-medium">Kategori</Label>
+											<Label className="block mb-3 font-medium">Kategori</Label>
 											<div className="gap-2 grid grid-cols-2">
 												{categories.map((category) => (
 													<Button
 														key={category}
-														variant={filters.category === category ? "default" : "outline"}
+														variant={
+															filters.category === category
+																? "default"
+																: "outline"
+														}
 														size="sm"
-														onClick={() => handleFilterChange("category", category)}
+														onClick={() =>
+															handleFilterChange("category", category)
+														}
 														className="justify-start text-xs"
 													>
 														{category}
@@ -412,14 +467,22 @@ export default function ResourcesPage() {
 
 										{/* Difficulty Filter */}
 										<div className="mb-6">
-											<Label className="mb-3 block font-medium">Zorluk Seviyesi</Label>
+											<Label className="block mb-3 font-medium">
+												Zorluk Seviyesi
+											</Label>
 											<div className="gap-2 grid">
 												{difficulties.map((difficulty) => (
 													<Button
 														key={difficulty}
-														variant={filters.difficulty === difficulty ? "default" : "outline"}
+														variant={
+															filters.difficulty === difficulty
+																? "default"
+																: "outline"
+														}
 														size="sm"
-														onClick={() => handleFilterChange("difficulty", difficulty)}
+														onClick={() =>
+															handleFilterChange("difficulty", difficulty)
+														}
 														className="justify-start text-xs"
 													>
 														{difficulty}
@@ -430,14 +493,22 @@ export default function ResourcesPage() {
 
 										{/* Content Type Filter */}
 										<div className="mb-6">
-											<Label className="mb-3 block font-medium">İçerik Türü</Label>
+											<Label className="block mb-3 font-medium">
+												İçerik Türü
+											</Label>
 											<div className="gap-2 grid grid-cols-2">
 												{contentTypes.map((type) => (
 													<Button
 														key={type}
-														variant={filters.contentType === type ? "default" : "outline"}
+														variant={
+															filters.contentType === type
+																? "default"
+																: "outline"
+														}
 														size="sm"
-														onClick={() => handleFilterChange("contentType", type)}
+														onClick={() =>
+															handleFilterChange("contentType", type)
+														}
 														className="justify-start text-xs"
 													>
 														{type}
@@ -448,21 +519,27 @@ export default function ResourcesPage() {
 
 										{/* Author Filter */}
 										<div className="mb-6">
-											<Label htmlFor="author" className="mb-2 block font-medium">
+											<Label
+												htmlFor="author"
+												className="block mb-2 font-medium"
+											>
 												Yazar
 											</Label>
 											<Input
 												id="author"
 												placeholder="Yazar adı ara..."
 												value={filters.author}
-												onChange={(e) => handleFilterChange("author", e.target.value)}
+												onChange={(e) =>
+													handleFilterChange("author", e.target.value)
+												}
 											/>
 										</div>
 
 										{/* Rating Filter */}
 										<div className="mb-6">
-											<Label className="mb-3 block font-medium">
-												Minimum Puan: {filters.minRating > 0 ? filters.minRating : "Tümü"}
+											<Label className="block mb-3 font-medium">
+												Minimum Puan:{" "}
+												{filters.minRating > 0 ? filters.minRating : "Tümü"}
 											</Label>
 											<input
 												type="range"
@@ -470,10 +547,15 @@ export default function ResourcesPage() {
 												max="5"
 												step="0.5"
 												value={filters.minRating}
-												onChange={(e) => handleFilterChange("minRating", parseFloat(e.target.value))}
+												onChange={(e) =>
+													handleFilterChange(
+														"minRating",
+														Number.parseFloat(e.target.value),
+													)
+												}
 												className="w-full"
 											/>
-											<div className="flex justify-between text-xs text-gray-500">
+											<div className="flex justify-between text-gray-500 text-xs">
 												<span>0</span>
 												<span>5</span>
 											</div>
@@ -481,18 +563,24 @@ export default function ResourcesPage() {
 
 										{/* Date Range Filter */}
 										<div className="mb-6">
-											<Label className="mb-3 block font-medium">Yayın Tarihi</Label>
+											<Label className="block mb-3 font-medium">
+												Yayın Tarihi
+											</Label>
 											<div className="space-y-2">
 												<Input
 													type="date"
 													value={filters.dateFrom}
-													onChange={(e) => handleFilterChange("dateFrom", e.target.value)}
+													onChange={(e) =>
+														handleFilterChange("dateFrom", e.target.value)
+													}
 													placeholder="Başlangıç tarihi"
 												/>
 												<Input
 													type="date"
 													value={filters.dateTo}
-													onChange={(e) => handleFilterChange("dateTo", e.target.value)}
+													onChange={(e) =>
+														handleFilterChange("dateTo", e.target.value)
+													}
 													placeholder="Bitiş tarihi"
 												/>
 											</div>
@@ -517,20 +605,22 @@ export default function ResourcesPage() {
 						<div className="flex-1">
 							{isLoading ? (
 								// Skeleton Loading
-								<div className={`grid gap-6 ${
-									viewMode === "grid" 
-										? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-										: "grid-cols-1"
-								}`}>
+								<div
+									className={`grid gap-6 ${
+										viewMode === "grid"
+											? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+											: "grid-cols-1"
+									}`}
+								>
 									{Array.from({ length: 6 }, (_, i) => (
 										<Card key={i} className="animate-pulse">
 											<CardContent className="p-6">
-												<div className="bg-gray-200 rounded-lg w-full h-48 mb-4"></div>
-												<div className="bg-gray-200 rounded w-3/4 h-4 mb-2"></div>
-												<div className="bg-gray-200 rounded w-1/2 h-4 mb-4"></div>
+												<div className="bg-gray-200 mb-4 rounded-lg w-full h-48" />
+												<div className="bg-gray-200 mb-2 rounded w-3/4 h-4" />
+												<div className="bg-gray-200 mb-4 rounded w-1/2 h-4" />
 												<div className="flex justify-between">
-													<div className="bg-gray-200 rounded w-20 h-4"></div>
-													<div className="bg-gray-200 rounded w-16 h-4"></div>
+													<div className="bg-gray-200 rounded w-20 h-4" />
+													<div className="bg-gray-200 rounded w-16 h-4" />
 												</div>
 											</CardContent>
 										</Card>
@@ -539,11 +629,13 @@ export default function ResourcesPage() {
 							) : (
 								<>
 									{/* Resources Grid/List */}
-									<div className={`grid gap-6 ${
-										viewMode === "grid" 
-											? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3" 
-											: "grid-cols-1"
-									}`}>
+									<div
+										className={`grid gap-6 ${
+											viewMode === "grid"
+												? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+												: "grid-cols-1"
+										}`}
+									>
 										{paginatedResources.map((resource) => (
 											<Card
 												key={resource.id}
@@ -551,14 +643,20 @@ export default function ResourcesPage() {
 													viewMode === "list" ? "flex" : ""
 												}`}
 											>
-												<div className={`relative overflow-hidden ${
-													viewMode === "list" ? "w-48 flex-shrink-0" : ""
-												}`}>
-													<img
+												<div
+													className={`relative overflow-hidden ${
+														viewMode === "list" ? "w-48 flex-shrink-0" : ""
+													}`}
+												>
+													<Image
 														src={resource.thumbnail}
 														alt={resource.title}
+														width={1000}
+														height={1000}
 														className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
-															viewMode === "list" ? "w-full h-full" : "w-full h-48"
+															viewMode === "list"
+																? "w-full h-full"
+																: "w-full h-48"
 														}`}
 													/>
 													<div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
@@ -583,13 +681,15 @@ export default function ResourcesPage() {
 													</div>
 												</div>
 
-												<CardContent className={`${viewMode === "list" ? "flex-1" : ""} p-6`}>
+												<CardContent
+													className={`${viewMode === "list" ? "flex-1" : ""} p-6`}
+												>
 													<div className="flex justify-between items-start mb-3">
 														<div className="flex-1">
-															<h3 className="font-semibold text-lg group-hover:text-blue-600 transition-colors line-clamp-2 mb-2">
+															<h3 className="mb-2 font-semibold group-hover:text-blue-600 text-lg line-clamp-2 transition-colors">
 																{resource.title}
 															</h3>
-															<p className="text-gray-600 text-sm line-clamp-2 mb-3">
+															<p className="mb-3 text-gray-600 text-sm line-clamp-2">
 																{resource.description}
 															</p>
 														</div>
@@ -604,7 +704,7 @@ export default function ResourcesPage() {
 														</span>
 													</div>
 
-													<div className="flex items-center justify-between mb-4 text-sm text-gray-500">
+													<div className="flex justify-between items-center mb-4 text-gray-500 text-sm">
 														<div className="flex items-center gap-4">
 															<div className="flex items-center">
 																{renderStars(resource.rating)}
@@ -622,8 +722,8 @@ export default function ResourcesPage() {
 														</div>
 													</div>
 
-													<div className="flex items-center justify-between">
-														<div className="flex items-center text-sm text-gray-600">
+													<div className="flex justify-between items-center">
+														<div className="flex items-center text-gray-600 text-sm">
 															<User className="mr-1 w-4 h-4" />
 															<span>{resource.author}</span>
 														</div>
@@ -648,31 +748,40 @@ export default function ResourcesPage() {
 										<div className="flex justify-center items-center gap-2 mt-12">
 											<Button
 												variant="outline"
-												onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+												onClick={() =>
+													setCurrentPage((prev) => Math.max(1, prev - 1))
+												}
 												disabled={currentPage === 1}
 											>
 												Önceki
 											</Button>
-											
-											{Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-												const pageNum = i + 1;
-												return (
-													<Button
-														key={pageNum}
-														variant={currentPage === pageNum ? "default" : "outline"}
-														onClick={() => setCurrentPage(pageNum)}
-														className="w-10"
-													>
-														{pageNum}
-													</Button>
-												);
-											})}
-											
+
+											{Array.from(
+												{ length: Math.min(5, totalPages) },
+												(_, i) => {
+													const pageNum = i + 1;
+													return (
+														<Button
+															key={pageNum}
+															variant={
+																currentPage === pageNum ? "default" : "outline"
+															}
+															onClick={() => setCurrentPage(pageNum)}
+															className="w-10"
+														>
+															{pageNum}
+														</Button>
+													);
+												},
+											)}
+
 											{totalPages > 5 && (
 												<>
 													<span className="text-gray-500">...</span>
 													<Button
-														variant={currentPage === totalPages ? "default" : "outline"}
+														variant={
+															currentPage === totalPages ? "default" : "outline"
+														}
 														onClick={() => setCurrentPage(totalPages)}
 														className="w-10"
 													>
@@ -680,10 +789,14 @@ export default function ResourcesPage() {
 													</Button>
 												</>
 											)}
-											
+
 											<Button
 												variant="outline"
-												onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+												onClick={() =>
+													setCurrentPage((prev) =>
+														Math.min(totalPages, prev + 1),
+													)
+												}
 												disabled={currentPage === totalPages}
 											>
 												Sonraki
@@ -699,7 +812,8 @@ export default function ResourcesPage() {
 												Kaynak Bulunamadı
 											</h3>
 											<p className="mb-6 text-gray-600">
-												Arama kriterlerinize uygun kaynak bulunamadı. Filtreleri değiştirmeyi deneyin.
+												Arama kriterlerinize uygun kaynak bulunamadı. Filtreleri
+												değiştirmeyi deneyin.
 											</p>
 											<Button onClick={clearFilters} variant="outline">
 												Filtreleri Temizle
