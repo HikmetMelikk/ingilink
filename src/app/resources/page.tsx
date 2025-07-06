@@ -2,26 +2,22 @@
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { ResourceCard } from "@/components/resources/ResourceCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-	BookOpen,
-	Calendar,
-	Download,
-	Eye,
-	Filter,
-	Grid3X3,
-	Heart,
-	List,
-	Search,
-	Star,
-	User,
-	X,
-} from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import type { Resource, ResourceFilters } from "@/types/resource";
+import { BookOpen, Filter, Search, Star, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 // Mock data - gerçek uygulamada API'den gelecek
 const mockResources = [
@@ -160,39 +156,12 @@ const sortOptions = [
 	{ value: "title", label: "Alfabetik" },
 ];
 
-interface Filters {
-	search: string;
-	category: string;
-	difficulty: string;
-	contentType: string;
-	author: string;
-	minRating: number;
-	dateFrom: string;
-	dateTo: string;
-	sortBy: string;
-}
-
-export default function ResourcesPage() {
-	const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-	const [showFilters, setShowFilters] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
-	const [currentPage, setCurrentPage] = useState(1);
-	const [filters, setFilters] = useState<Filters>({
-		search: "",
-		category: "Tümü",
-		difficulty: "Tümü",
-		contentType: "Tümü",
-		author: "",
-		minRating: 0,
-		dateFrom: "",
-		dateTo: "",
-		sortBy: "popular",
-	});
-
-	const itemsPerPage = 12;
-
-	// Filtrelenmiş ve sıralanmış kaynaklar
-	const filteredResources = mockResources.filter((resource) => {
+const filterAndSortResources = (
+	resources: Resource[],
+	filters: ResourceFilters,
+): Resource[] => {
+	// Filter resources
+	const filtered = resources.filter((resource) => {
 		const matchesSearch =
 			resource.title.toLowerCase().includes(filters.search.toLowerCase()) ||
 			resource.description
@@ -238,8 +207,8 @@ export default function ResourcesPage() {
 		);
 	});
 
-	// Sıralama
-	filteredResources.sort((a, b) => {
+	// Sort filtered resources
+	return [...filtered].sort((a, b) => {
 		switch (filters.sortBy) {
 			case "popular":
 				return b.views - a.views;
@@ -259,12 +228,45 @@ export default function ResourcesPage() {
 				return 0;
 		}
 	});
+};
 
-	// Sayfalama
+export default function ResourcesPage() {
+	const [showFilters, setShowFilters] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [currentPage, setCurrentPage] = useState(1);
+	const itemsPerPage = 12;
+
+	// Create unique IDs for skeleton cards
+	const skeletonIds = Array.from({ length: 6 }, () => crypto.randomUUID());
+
+	const [filters, setFilters] = useState<ResourceFilters>({
+		search: "",
+		category: "Tümü",
+		difficulty: "Tümü",
+		contentType: "Tümü",
+		author: "",
+		minRating: 0,
+		dateFrom: "",
+		dateTo: "",
+		sortBy: "popular",
+	});
+
+	// Filtrelenmiş ve sıralanmış kaynaklar
+	const filteredResources = useMemo(() => {
+		return filterAndSortResources(mockResources, filters);
+	}, [filters]);
+
+	// Pagination calculations
 	const totalPages = Math.ceil(filteredResources.length / itemsPerPage);
+	const pageNumbers = Array.from(
+		{ length: Math.min(5, totalPages) },
+		(_, i) => i + 1,
+	);
+
+	const startIndex = (currentPage - 1) * itemsPerPage;
 	const paginatedResources = filteredResources.slice(
-		(currentPage - 1) * itemsPerPage,
-		currentPage * itemsPerPage,
+		startIndex,
+		startIndex + itemsPerPage,
 	);
 
 	// Filtre değişikliklerinde sayfa 1'e dön
@@ -272,7 +274,10 @@ export default function ResourcesPage() {
 		setCurrentPage(1);
 	}, []);
 
-	const handleFilterChange = (key: keyof Filters, value: string | number) => {
+	const handleFilterChange = (
+		key: keyof ResourceFilters,
+		value: string | number,
+	) => {
 		setFilters((prev) => ({ ...prev, [key]: value }));
 	};
 
@@ -360,49 +365,35 @@ export default function ResourcesPage() {
 									placeholder="Kaynak, yazar veya etiket ara..."
 									value={filters.search}
 									onChange={(e) => handleFilterChange("search", e.target.value)}
-									className="pl-10 h-12 text-lg"
+									className="pl-10 h-9 text-lg"
 								/>
 							</div>
 
 							{/* Sort Dropdown */}
 							<div className="flex items-center gap-4">
-								<select
+								<Select
 									value={filters.sortBy}
-									onChange={(e) => handleFilterChange("sortBy", e.target.value)}
-									className="bg-white px-4 py-3 border border-gray-300 focus:border-blue-500 rounded-md focus:ring-2 focus:ring-blue-200 text-sm"
+									onValueChange={(value) => handleFilterChange("sortBy", value)}
 								>
-									{sortOptions.map((option) => (
-										<option key={option.value} value={option.value}>
-											{option.label}
-										</option>
-									))}
-								</select>
-
-								{/* View Mode Toggle */}
-								<div className="flex border border-gray-300 rounded-md overflow-hidden">
-									<Button
-										variant={viewMode === "grid" ? "default" : "ghost"}
-										size="sm"
-										onClick={() => setViewMode("grid")}
-										className="rounded-none"
-									>
-										<Grid3X3 className="w-4 h-4" />
-									</Button>
-									<Button
-										variant={viewMode === "list" ? "default" : "ghost"}
-										size="sm"
-										onClick={() => setViewMode("list")}
-										className="rounded-none"
-									>
-										<List className="w-4 h-4" />
-									</Button>
-								</div>
+									<SelectTrigger className="w-[180px]">
+										<SelectValue placeholder="Sıralama" />
+									</SelectTrigger>
+									<SelectContent>
+										{sortOptions.map((option) => (
+											<SelectItem key={option.value} value={option.value}>
+												{option.label}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
 
 								{/* Filter Toggle */}
 								<Button
 									variant="outline"
 									onClick={() => setShowFilters(!showFilters)}
-									className={`${hasActiveFilters ? "border-blue-500 text-blue-600" : ""}`}
+									className={cn(
+										hasActiveFilters && "border-blue-500 text-blue-600",
+									)}
 								>
 									<Filter className="mr-2 w-4 h-4" />
 									Filtreler
@@ -605,15 +596,9 @@ export default function ResourcesPage() {
 						<div className="flex-1">
 							{isLoading ? (
 								// Skeleton Loading
-								<div
-									className={`grid gap-6 ${
-										viewMode === "grid"
-											? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-											: "grid-cols-1"
-									}`}
-								>
-									{Array.from({ length: 6 }, (_, i) => (
-										<Card key={i} className="animate-pulse">
+								<div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+									{skeletonIds.map((id) => (
+										<Card key={id} className="animate-pulse">
 											<CardContent className="p-6">
 												<div className="bg-gray-200 mb-4 rounded-lg w-full h-48" />
 												<div className="bg-gray-200 mb-2 rounded w-3/4 h-4" />
@@ -628,181 +613,16 @@ export default function ResourcesPage() {
 								</div>
 							) : (
 								<>
-									{/* Resources Grid/List */}
-									<div
-										className={`grid gap-6 ${
-											viewMode === "grid"
-												? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-												: "grid-cols-1"
-										}`}
-									>
+									{/* Resources Grid */}
+									<div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
 										{paginatedResources.map((resource) => (
-											<Card
+											<ResourceCard
 												key={resource.id}
-												className={`group shadow-md hover:shadow-xl border-0 transition-all duration-300 ${
-													viewMode === "list" ? "flex" : ""
-												}`}
-											>
-												<div
-													className={`relative overflow-hidden ${
-														viewMode === "list" ? "w-48 flex-shrink-0" : ""
-													}`}
-												>
-													<Image
-														src={resource.thumbnail}
-														alt={resource.title}
-														width={1000}
-														height={1000}
-														className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
-															viewMode === "list"
-																? "w-full h-full"
-																: "w-full h-48"
-														}`}
-													/>
-													<div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
-													<Button
-														variant="ghost"
-														size="icon"
-														onClick={() => toggleFavorite(resource.id)}
-														className="top-2 right-2 absolute bg-white/80 hover:bg-white"
-													>
-														<Heart
-															className={`w-4 h-4 ${
-																resource.isFavorite
-																	? "fill-red-500 text-red-500"
-																	: "text-gray-600"
-															}`}
-														/>
-													</Button>
-													<div className="bottom-2 left-2 absolute">
-														<span className="bg-black/70 backdrop-blur-sm px-2 py-1 rounded text-white text-xs">
-															{resource.contentType}
-														</span>
-													</div>
-												</div>
-
-												<CardContent
-													className={`${viewMode === "list" ? "flex-1" : ""} p-6`}
-												>
-													<div className="flex justify-between items-start mb-3">
-														<div className="flex-1">
-															<h3 className="mb-2 font-semibold group-hover:text-blue-600 text-lg line-clamp-2 transition-colors">
-																{resource.title}
-															</h3>
-															<p className="mb-3 text-gray-600 text-sm line-clamp-2">
-																{resource.description}
-															</p>
-														</div>
-													</div>
-
-													<div className="flex items-center gap-2 mb-3">
-														<span className="bg-blue-100 px-2 py-1 rounded-full text-blue-800 text-xs">
-															{resource.category}
-														</span>
-														<span className="bg-gray-100 px-2 py-1 rounded-full text-gray-800 text-xs">
-															{resource.difficulty}
-														</span>
-													</div>
-
-													<div className="flex justify-between items-center mb-4 text-gray-500 text-sm">
-														<div className="flex items-center gap-4">
-															<div className="flex items-center">
-																{renderStars(resource.rating)}
-																<span className="ml-1 font-medium">
-																	{resource.rating}
-																</span>
-																<span className="ml-1">
-																	({resource.ratingCount})
-																</span>
-															</div>
-															<div className="flex items-center">
-																<Eye className="mr-1 w-4 h-4" />
-																<span>{resource.views}</span>
-															</div>
-														</div>
-													</div>
-
-													<div className="flex justify-between items-center">
-														<div className="flex items-center text-gray-600 text-sm">
-															<User className="mr-1 w-4 h-4" />
-															<span>{resource.author}</span>
-														</div>
-														<div className="flex items-center gap-2">
-															<span className="text-gray-500 text-xs">
-																<Calendar className="inline mr-1 w-3 h-3" />
-																{formatDate(resource.publishDate)}
-															</span>
-															<Button size="sm" variant="outline">
-																<Download className="mr-1 w-4 h-4" />
-																İndir
-															</Button>
-														</div>
-													</div>
-												</CardContent>
-											</Card>
+												resource={resource}
+												onToggleFavorite={toggleFavorite}
+											/>
 										))}
 									</div>
-
-									{/* Pagination */}
-									{totalPages > 1 && (
-										<div className="flex justify-center items-center gap-2 mt-12">
-											<Button
-												variant="outline"
-												onClick={() =>
-													setCurrentPage((prev) => Math.max(1, prev - 1))
-												}
-												disabled={currentPage === 1}
-											>
-												Önceki
-											</Button>
-
-											{Array.from(
-												{ length: Math.min(5, totalPages) },
-												(_, i) => {
-													const pageNum = i + 1;
-													return (
-														<Button
-															key={pageNum}
-															variant={
-																currentPage === pageNum ? "default" : "outline"
-															}
-															onClick={() => setCurrentPage(pageNum)}
-															className="w-10"
-														>
-															{pageNum}
-														</Button>
-													);
-												},
-											)}
-
-											{totalPages > 5 && (
-												<>
-													<span className="text-gray-500">...</span>
-													<Button
-														variant={
-															currentPage === totalPages ? "default" : "outline"
-														}
-														onClick={() => setCurrentPage(totalPages)}
-														className="w-10"
-													>
-														{totalPages}
-													</Button>
-												</>
-											)}
-
-											<Button
-												variant="outline"
-												onClick={() =>
-													setCurrentPage((prev) =>
-														Math.min(totalPages, prev + 1),
-													)
-												}
-												disabled={currentPage === totalPages}
-											>
-												Sonraki
-											</Button>
-										</div>
-									)}
 
 									{/* No Results */}
 									{filteredResources.length === 0 && (
@@ -817,6 +637,86 @@ export default function ResourcesPage() {
 											</p>
 											<Button onClick={clearFilters} variant="outline">
 												Filtreleri Temizle
+											</Button>
+										</div>
+									)}
+
+									{/* Pagination */}
+									{totalPages > 1 && (
+										<div className="flex justify-center items-center gap-2 mt-12">
+											<Button
+												variant="outline"
+												onClick={() =>
+													setCurrentPage((prev) => Math.max(1, prev - 1))
+												}
+												disabled={currentPage === 1}
+											>
+												Önceki
+											</Button>
+
+											{/* First page */}
+											<Button
+												variant={currentPage === 1 ? "default" : "outline"}
+												onClick={() => setCurrentPage(1)}
+												className="w-10"
+											>
+												1
+											</Button>
+
+											{/* Ellipsis if needed */}
+											{currentPage > 3 && (
+												<span className="text-gray-500">...</span>
+											)}
+
+											{/* Pages around current page */}
+											{Array.from({ length: 3 }, (_, i) => {
+												const pageNum = Math.min(
+													Math.max(currentPage - 1 + i, 2),
+													totalPages - 1,
+												);
+												if (pageNum <= 1 || pageNum >= totalPages) return null;
+												return (
+													<Button
+														key={`pagination-${pageNum}`}
+														variant={
+															currentPage === pageNum ? "default" : "outline"
+														}
+														onClick={() => setCurrentPage(pageNum)}
+														className="w-10"
+													>
+														{pageNum}
+													</Button>
+												);
+											})}
+
+											{/* Ellipsis if needed */}
+											{currentPage < totalPages - 2 && (
+												<span className="text-gray-500">...</span>
+											)}
+
+											{/* Last page */}
+											{totalPages > 1 && (
+												<Button
+													variant={
+														currentPage === totalPages ? "default" : "outline"
+													}
+													onClick={() => setCurrentPage(totalPages)}
+													className="w-10"
+												>
+													{totalPages}
+												</Button>
+											)}
+
+											<Button
+												variant="outline"
+												onClick={() =>
+													setCurrentPage((prev) =>
+														Math.min(totalPages, prev + 1),
+													)
+												}
+												disabled={currentPage === totalPages}
+											>
+												Sonraki
 											</Button>
 										</div>
 									)}

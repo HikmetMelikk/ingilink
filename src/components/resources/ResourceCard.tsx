@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Calendar, Download, Eye, Heart, Star, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,13 +24,11 @@ interface Resource {
 
 interface ResourceCardProps {
 	resource: Resource;
-	viewMode?: "grid" | "list";
 	onToggleFavorite?: (id: number) => void;
 }
 
 export function ResourceCard({
 	resource,
-	viewMode = "grid",
 	onToggleFavorite,
 }: ResourceCardProps) {
 	const renderStars = (rating: number) => {
@@ -55,28 +53,17 @@ export function ResourceCard({
 	};
 
 	return (
-		<Card
-			className={`group shadow-md hover:shadow-xl border-0 transition-all duration-300 ${
-				viewMode === "list" ? "flex" : ""
-			}`}
-		>
-			<div
-				className={`relative overflow-hidden ${
-					viewMode === "list" ? "w-48 flex-shrink-0" : ""
-				}`}
-			>
+		<Card className="group shadow-md hover:shadow-xl p-0 border-0 transition-all duration-300">
+			<CardHeader className="relative space-y-0 p-0 h-48 overflow-hidden">
 				<Link href={`/resources/${resource.id}`}>
 					<Image
 						src={resource.thumbnail}
 						alt={resource.title}
 						width={1000}
 						height={1000}
-						className={`object-cover group-hover:scale-105 transition-transform duration-300 ${
-							viewMode === "list" ? "w-full h-full" : "w-full h-48"
-						}`}
+						className="rounded-t-lg w-full h-full object-cover"
 					/>
 				</Link>
-				<div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors duration-300" />
 				<Button
 					variant="ghost"
 					size="icon"
@@ -96,9 +83,9 @@ export function ResourceCard({
 						{resource.contentType}
 					</span>
 				</div>
-			</div>
+			</CardHeader>
 
-			<CardContent className={`${viewMode === "list" ? "flex-1" : ""} p-6`}>
+			<CardContent className="p-6">
 				<div className="flex justify-between items-start mb-3">
 					<div className="flex-1">
 						<Link href={`/resources/${resource.id}`}>

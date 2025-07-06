@@ -25,7 +25,15 @@ interface ResourceFiltersProps {
 	hasActiveFilters: boolean;
 }
 
-const categories = ["Tümü", "Grammar", "Vocabulary", "Listening", "Speaking", "Writing", "Reading"];
+const categories = [
+	"Tümü",
+	"Grammar",
+	"Vocabulary",
+	"Listening",
+	"Speaking",
+	"Writing",
+	"Reading",
+];
 const difficulties = ["Tümü", "Beginner", "Intermediate", "Advanced"];
 const contentTypes = ["Tümü", "PDF", "Video", "Audio", "Article", "Test"];
 
@@ -36,13 +44,13 @@ export function ResourceFilters({
 	hasActiveFilters,
 }: ResourceFiltersProps) {
 	return (
-		<Card className="sticky top-8">
+		<Card className="top-8 sticky">
 			<CardContent className="p-6">
 				<h3 className="mb-6 font-semibold text-lg">Filtreler</h3>
 
 				{/* Category Filter */}
 				<div className="mb-6">
-					<Label className="mb-3 block font-medium">Kategori</Label>
+					<Label className="block mb-3 font-medium">Kategori</Label>
 					<div className="gap-2 grid grid-cols-2">
 						{categories.map((category) => (
 							<Button
@@ -60,12 +68,14 @@ export function ResourceFilters({
 
 				{/* Difficulty Filter */}
 				<div className="mb-6">
-					<Label className="mb-3 block font-medium">Zorluk Seviyesi</Label>
+					<Label className="block mb-3 font-medium">Zorluk Seviyesi</Label>
 					<div className="gap-2 grid">
 						{difficulties.map((difficulty) => (
 							<Button
 								key={difficulty}
-								variant={filters.difficulty === difficulty ? "default" : "outline"}
+								variant={
+									filters.difficulty === difficulty ? "default" : "outline"
+								}
 								size="sm"
 								onClick={() => onFilterChange("difficulty", difficulty)}
 								className="justify-start text-xs"
@@ -78,7 +88,7 @@ export function ResourceFilters({
 
 				{/* Content Type Filter */}
 				<div className="mb-6">
-					<Label className="mb-3 block font-medium">İçerik Türü</Label>
+					<Label className="block mb-3 font-medium">İçerik Türü</Label>
 					<div className="gap-2 grid grid-cols-2">
 						{contentTypes.map((type) => (
 							<Button
@@ -96,7 +106,7 @@ export function ResourceFilters({
 
 				{/* Author Filter */}
 				<div className="mb-6">
-					<Label htmlFor="author" className="mb-2 block font-medium">
+					<Label htmlFor="author" className="block mb-2 font-medium">
 						Yazar
 					</Label>
 					<Input
@@ -109,7 +119,7 @@ export function ResourceFilters({
 
 				{/* Rating Filter */}
 				<div className="mb-6">
-					<Label className="mb-3 block font-medium">
+					<Label className="block mb-3 font-medium">
 						Minimum Puan: {filters.minRating > 0 ? filters.minRating : "Tümü"}
 					</Label>
 					<input
@@ -118,10 +128,12 @@ export function ResourceFilters({
 						max="5"
 						step="0.5"
 						value={filters.minRating}
-						onChange={(e) => onFilterChange("minRating", parseFloat(e.target.value))}
+						onChange={(e) =>
+							onFilterChange("minRating", Number.parseFloat(e.target.value))
+						}
 						className="w-full"
 					/>
-					<div className="flex justify-between text-xs text-gray-500">
+					<div className="flex justify-between text-gray-500 text-xs">
 						<span>0</span>
 						<span>5</span>
 					</div>
@@ -129,7 +141,7 @@ export function ResourceFilters({
 
 				{/* Date Range Filter */}
 				<div className="mb-6">
-					<Label className="mb-3 block font-medium">Yayın Tarihi</Label>
+					<Label className="block mb-3 font-medium">Yayın Tarihi</Label>
 					<div className="space-y-2">
 						<Input
 							type="date"
@@ -147,11 +159,7 @@ export function ResourceFilters({
 				</div>
 
 				{hasActiveFilters && (
-					<Button
-						variant="outline"
-						onClick={onClearFilters}
-						className="w-full"
-					>
+					<Button variant="outline" onClick={onClearFilters} className="w-full">
 						<X className="mr-2 w-4 h-4" />
 						Tüm Filtreleri Temizle
 					</Button>

@@ -44,5 +44,4 @@ export interface ResourcesResponse {
 	};
 }
 
-export type ViewMode = "grid" | "list";
 export type SortOption = "popular" | "rating" | "newest" | "oldest" | "title";

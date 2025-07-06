@@ -140,8 +140,9 @@ export default function AboutPage() {
 								<Image
 									src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
 									alt="İngilizce öğrenme"
-									width={100}
-									height={100}
+									width={1000}
+									height={1000}
+									quality={100}
 									className="shadow-xl rounded-lg"
 								/>
 								<div className="-bottom-6 -left-6 absolute bg-blue-600 shadow-lg p-6 rounded-lg text-white">
@@ -239,8 +240,9 @@ export default function AboutPage() {
 										<Image
 											src={member.image}
 											alt={member.name}
-											width={100}
-											height={100}
+											width={1000}
+											height={1000}
+											quality={100}
 											className="mx-auto mb-4 rounded-full w-24 h-24 object-cover"
 										/>
 										<h3 className="mb-1 font-semibold text-gray-900 text-xl">
