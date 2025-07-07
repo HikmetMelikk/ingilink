@@ -1,7 +1,20 @@
+"use client";
+
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { 
+	pageVariants, 
+	slideFromRight, 
+	staggerContainer, 
+	staggerItem, 
+	progressiveReveal,
+	scrollTriggered,
+	buttonHover,
+	cardHover
+} from "@/lib/motion-variants";
+import { motion } from "framer-motion";
 import { Award, BookOpen, Globe, Heart, Target, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -77,35 +90,63 @@ const stats = [
 
 export default function AboutPage() {
 	return (
-		<div className="flex flex-col min-h-screen">
+		<motion.div 
+			className="flex flex-col min-h-screen"
+			initial="initial"
+			animate="animate"
+			variants={pageVariants}
+		>
 			<Header />
 			<main className="flex-1">
 				{/* Hero Section */}
-				<section className="bg-gradient-to-br from-blue-50 to-green-50 py-20">
+				<motion.section 
+					className="bg-gradient-to-br from-blue-50 to-green-50 py-20"
+					variants={staggerContainer}
+					initial="initial"
+					animate="animate"
+				>
 					<div className="mx-auto px-4 container">
-						<div className="mx-auto max-w-4xl text-center">
-							<h1 className="mb-6 font-bold text-gray-900 text-4xl md:text-5xl">
+						<motion.div 
+							className="mx-auto max-w-4xl text-center"
+							variants={staggerItem}
+						>
+							<motion.h1 
+								className="mb-6 font-bold text-gray-900 text-4xl md:text-5xl"
+								variants={slideFromRight}
+							>
 								İngilizce Öğrenmeyi
 								<span className="block text-blue-600">
 									Herkes İçin Erişilebilir
 								</span>
 								Hale Getiriyoruz
-							</h1>
-							<p className="text-gray-600 text-xl leading-relaxed">
+							</motion.h1>
+							<motion.p 
+								className="text-gray-600 text-xl leading-relaxed"
+								variants={staggerItem}
+							>
 								ingilink, İngilizce öğrenmek isteyen herkesin kaliteli
 								kaynaklara erişebileceği, kendi deneyimlerini paylaşabileceği ve
 								birlikte öğrenebileceği bir platform oluşturmak amacıyla
 								kurulmuştur.
-							</p>
-						</div>
+							</motion.p>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 
 				{/* Mission & Vision */}
-				<section className="bg-white py-20">
+				<motion.section 
+					className="bg-white py-20"
+					{...scrollTriggered}
+				>
 					<div className="mx-auto px-4 container">
-						<div className="items-center gap-12 grid grid-cols-1 lg:grid-cols-2">
-							<div>
+						<motion.div 
+							className="items-center gap-12 grid grid-cols-1 lg:grid-cols-2"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
+							<motion.div variants={staggerItem}>
 								<div className="mb-12">
 									<div className="flex items-center mb-4">
 										<Target className="mr-3 w-8 h-8 text-blue-600" />
@@ -135,8 +176,11 @@ export default function AboutPage() {
 										demokratikleştirerek dil bariyerlerini ortadan kaldırmak.
 									</p>
 								</div>
-							</div>
-							<div className="relative">
+							</motion.div>
+							<motion.div 
+								className="relative"
+								variants={progressiveReveal}
+							>
 								<Image
 									src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=600"
 									alt="İngilizce öğrenme"
@@ -145,156 +189,275 @@ export default function AboutPage() {
 									quality={100}
 									className="shadow-xl rounded-lg"
 								/>
-								<div className="-bottom-6 -left-6 absolute bg-blue-600 shadow-lg p-6 rounded-lg text-white">
+								<motion.div 
+									className="-bottom-6 -left-6 absolute bg-blue-600 shadow-lg p-6 rounded-lg text-white"
+									initial={{ opacity: 0, scale: 0.8 }}
+									whileInView={{ opacity: 1, scale: 1 }}
+									transition={{ delay: 0.5, duration: 0.6 }}
+									viewport={{ once: true }}
+								>
 									<div className="font-bold text-2xl">2023</div>
 									<div className="text-sm">Kuruluş Yılı</div>
-								</div>
-							</div>
-						</div>
+								</motion.div>
+							</motion.div>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 
 				{/* Values */}
-				<section className="bg-gray-50 py-20">
+				<motion.section 
+					className="bg-gray-50 py-20"
+					{...scrollTriggered}
+				>
 					<div className="mx-auto px-4 container">
-						<div className="mb-16 text-center">
-							<h2 className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl">
+						<motion.div 
+							className="mb-16 text-center"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
+							<motion.h2 
+								className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl"
+								variants={staggerItem}
+							>
 								Değerlerimiz
-							</h2>
-							<p className="mx-auto max-w-2xl text-gray-600 text-xl">
+							</motion.h2>
+							<motion.p 
+								className="mx-auto max-w-2xl text-gray-600 text-xl"
+								variants={staggerItem}
+							>
 								ingilink'i oluştururken rehber aldığımız temel değerler
-							</p>
-						</div>
+							</motion.p>
+						</motion.div>
 
-						<div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+						<motion.div 
+							className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
 							{values.map((value, index) => {
 								const IconComponent = value.icon;
 								return (
-									<Card
+									<motion.div
 										key={value.title}
-										className="shadow-md hover:shadow-lg border-0 text-center transition-shadow"
+										variants={staggerItem}
+										custom={index}
 									>
-										<CardContent className="p-8">
-											<div className="flex justify-center items-center bg-blue-100 mx-auto mb-6 rounded-full w-16 h-16">
-												<IconComponent className="w-8 h-8 text-blue-600" />
-											</div>
-											<h3 className="mb-4 font-semibold text-gray-900 text-xl">
-												{value.title}
-											</h3>
-											<p className="text-gray-600 leading-relaxed">
-												{value.description}
-											</p>
-										</CardContent>
-									</Card>
+										<motion.div variants={cardHover}>
+											<Card className="shadow-md hover:shadow-lg border-0 text-center transition-shadow">
+												<CardContent className="p-8">
+													<div className="flex justify-center items-center bg-blue-100 mx-auto mb-6 rounded-full w-16 h-16">
+														<IconComponent className="w-8 h-8 text-blue-600" />
+													</div>
+													<h3 className="mb-4 font-semibold text-gray-900 text-xl">
+														{value.title}
+													</h3>
+													<p className="text-gray-600 leading-relaxed">
+														{value.description}
+													</p>
+												</CardContent>
+											</Card>
+										</motion.div>
+									</motion.div>
 								);
 							})}
-						</div>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 
 				{/* Stats */}
-				<section className="bg-blue-600 py-20">
+				<motion.section 
+					className="bg-blue-600 py-20"
+					{...scrollTriggered}
+				>
 					<div className="mx-auto px-4 container">
-						<div className="mb-16 text-center">
-							<h2 className="mb-4 font-bold text-white text-3xl md:text-4xl">
+						<motion.div 
+							className="mb-16 text-center"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
+							<motion.h2 
+								className="mb-4 font-bold text-white text-3xl md:text-4xl"
+								variants={staggerItem}
+							>
 								Rakamlarla ingilink
-							</h2>
-							<p className="text-blue-100 text-xl">
+							</motion.h2>
+							<motion.p 
+								className="text-blue-100 text-xl"
+								variants={staggerItem}
+							>
 								Topluluğumuzun büyüklüğü ve etkisi
-							</p>
-						</div>
+							</motion.p>
+						</motion.div>
 
-						<div className="gap-8 grid grid-cols-2 lg:grid-cols-4">
+						<motion.div 
+							className="gap-8 grid grid-cols-2 lg:grid-cols-4"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
 							{stats.map((stat, index) => (
-								<div key={stat.label} className="text-center">
-									<div className="mb-2 font-bold text-white text-4xl md:text-5xl">
+								<motion.div 
+									key={stat.label} 
+									className="text-center"
+									variants={staggerItem}
+									custom={index}
+								>
+									<motion.div 
+										className="mb-2 font-bold text-white text-4xl md:text-5xl"
+										initial={{ scale: 0 }}
+										whileInView={{ scale: 1 }}
+										transition={{ delay: index * 0.1, duration: 0.6, type: "spring" }}
+										viewport={{ once: true }}
+									>
 										{stat.number}
-									</div>
+									</motion.div>
 									<div className="text-blue-100 text-lg">{stat.label}</div>
-								</div>
+								</motion.div>
 							))}
-						</div>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 
 				{/* Team */}
-				<section className="bg-white py-20">
+				<motion.section 
+					className="bg-white py-20"
+					{...scrollTriggered}
+				>
 					<div className="mx-auto px-4 container">
-						<div className="mb-16 text-center">
-							<h2 className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl">
+						<motion.div 
+							className="mb-16 text-center"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
+							<motion.h2 
+								className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl"
+								variants={staggerItem}
+							>
 								Ekibimiz
-							</h2>
-							<p className="mx-auto max-w-2xl text-gray-600 text-xl">
+							</motion.h2>
+							<motion.p 
+								className="mx-auto max-w-2xl text-gray-600 text-xl"
+								variants={staggerItem}
+							>
 								ingilink'i hayata geçiren tutkulu ve deneyimli ekibimizle
 								tanışın
-							</p>
-						</div>
+							</motion.p>
+						</motion.div>
 
-						<div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+						<motion.div 
+							className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
 							{teamMembers.map((member, index) => (
-								<Card
+								<motion.div
 									key={member.name}
-									className="shadow-md hover:shadow-lg border-0 text-center transition-shadow"
+									variants={staggerItem}
+									custom={index}
 								>
-									<CardContent className="p-6">
-										<Image
-											src={member.image}
-											alt={member.name}
-											width={1000}
-											height={1000}
-											quality={100}
-											className="mx-auto mb-4 rounded-full w-24 h-24 object-cover"
-										/>
-										<h3 className="mb-1 font-semibold text-gray-900 text-xl">
-											{member.name}
-										</h3>
-										<p className="mb-3 font-medium text-blue-600">
-											{member.role}
-										</p>
-										<p className="text-gray-600 text-sm leading-relaxed">
-											{member.bio}
-										</p>
-									</CardContent>
-								</Card>
+									<motion.div variants={cardHover}>
+										<Card className="shadow-md hover:shadow-lg border-0 text-center transition-shadow">
+											<CardContent className="p-6">
+												<motion.div
+													initial={{ scale: 0.8, opacity: 0 }}
+													whileInView={{ scale: 1, opacity: 1 }}
+													transition={{ delay: index * 0.1, duration: 0.5 }}
+													viewport={{ once: true }}
+												>
+													<Image
+														src={member.image}
+														alt={member.name}
+														width={1000}
+														height={1000}
+														quality={100}
+														className="mx-auto mb-4 rounded-full w-24 h-24 object-cover"
+													/>
+												</motion.div>
+												<h3 className="mb-1 font-semibold text-gray-900 text-xl">
+													{member.name}
+												</h3>
+												<p className="mb-3 font-medium text-blue-600">
+													{member.role}
+												</p>
+												<p className="text-gray-600 text-sm leading-relaxed">
+													{member.bio}
+												</p>
+											</CardContent>
+										</Card>
+									</motion.div>
+								</motion.div>
 							))}
-						</div>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 
 				{/* CTA */}
-				<section className="bg-gradient-to-r from-green-600 to-blue-600 py-20">
+				<motion.section 
+					className="bg-gradient-to-r from-green-600 to-blue-600 py-20"
+					{...scrollTriggered}
+				>
 					<div className="mx-auto px-4 container">
-						<div className="mx-auto max-w-3xl text-white text-center">
-							<h2 className="mb-6 font-bold text-3xl md:text-4xl">
+						<motion.div 
+							className="mx-auto max-w-3xl text-white text-center"
+							variants={staggerContainer}
+							initial="initial"
+							whileInView="animate"
+							viewport={{ once: true }}
+						>
+							<motion.h2 
+								className="mb-6 font-bold text-3xl md:text-4xl"
+								variants={staggerItem}
+							>
 								Bizimle İngilizce Öğrenme Yolculuğuna Başla
-							</h2>
-							<p className="opacity-90 mb-8 text-xl">
+							</motion.h2>
+							<motion.p 
+								className="opacity-90 mb-8 text-xl"
+								variants={staggerItem}
+							>
 								Binlerce kaliteli kaynak, destekleyici topluluk ve sürekli
 								gelişen platform ile İngilizce hedeflerine ulaş.
-							</p>
-							<div className="flex sm:flex-row flex-col justify-center gap-4">
-								<Button
-									asChild
-									size="lg"
-									variant="secondary"
-									className="bg-white hover:bg-gray-100 text-blue-600"
-								>
-									<Link href="/register">Ücretsiz Kayıt Ol</Link>
-								</Button>
-								<Button
-									asChild
-									size="lg"
-									variant="outline"
-									className="hover:bg-white border-white text-white hover:text-blue-600"
-								>
-									<Link href="/resources">Kaynakları Keşfet</Link>
-								</Button>
-							</div>
-						</div>
+							</motion.p>
+							<motion.div 
+								className="flex sm:flex-row flex-col justify-center gap-4"
+								variants={staggerItem}
+							>
+								<motion.div variants={buttonHover}>
+									<Button
+										asChild
+										size="lg"
+										variant="secondary"
+										className="bg-white hover:bg-gray-100 text-blue-600"
+									>
+										<Link href="/register">Ücretsiz Kayıt Ol</Link>
+									</Button>
+								</motion.div>
+								<motion.div variants={buttonHover}>
+									<Button
+										asChild
+										size="lg"
+										variant="outline"
+										className="hover:bg-white border-white text-white hover:text-blue-600"
+									>
+										<Link href="/resources">Kaynakları Keşfet</Link>
+									</Button>
+								</motion.div>
+							</motion.div>
+						</motion.div>
 					</div>
-				</section>
+				</motion.section>
 			</main>
 			<Footer />
-		</div>
+		</motion.div>
 	);
 }

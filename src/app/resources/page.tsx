@@ -15,8 +15,16 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import type { Resource, ResourceFilters } from "@/types/resource";
-import { BookOpen, Filter, Search, Star, X } from "lucide-react";
+import { 
+	pageVariants, 
+	staggerContainer, 
+	staggerItem, 
+	filterButtonVariants,
+	cardHover 
+} from "@/lib/motion-variants";
+import { motion, AnimatePresence } from "framer-motion";
+import type { Resource, ResourceFilters, ViewMode } from "@/types/resource";
+import { BookOpen, Filter, Search, Star, X, Grid3X3, List } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 // Mock data - gerçek uygulamada API'den gelecek
@@ -137,17 +145,9 @@ const mockResources = [
 	},
 ];
 
-const categories = [
-	"Tümü",
-	"Grammar",
-	"Vocabulary",
-	"Listening",
-	"Speaking",
-	"Writing",
-	"Reading",
-];
-const difficulties = ["Tümü", "Beginner", "Intermediate", "Advanced"];
-const contentTypes = ["Tümü", "PDF", "Video", "Audio", "Article", "Test"];
+const categories = ["Grammar", "Vocabulary", "Listening", "Speaking", "Writing", "Reading"];
+const difficulties = ["Beginner", "Intermediate", "Advanced"];
+const contentTypes = ["PDF", "Video", "Audio", "Article", "Test"];
 const sortOptions = [
 	{ value: "popular", label: "En Popüler" },
 	{ value: "rating", label: "En Yüksek Puanlı" },
@@ -171,14 +171,12 @@ const filterAndSortResources = (
 				tag.toLowerCase().includes(filters.search.toLowerCase()),
 			);
 
-		const matchesCategory =
-			filters.category === "Tümü" || resource.category === filters.category;
-		const matchesDifficulty =
-			filters.difficulty === "Tümü" ||
-			resource.difficulty === filters.difficulty;
-		const matchesContentType =
-			filters.contentType === "Tümü" ||
-			resource.contentType === filters.contentType;
+		const matchesCategories =
+			filters.categories.length === 0 || filters.categories.includes(resource.category);
+		const matchesDifficulties =
+			filters.difficulties.length === 0 || filters.difficulties.includes(resource.difficulty);
+		const matchesContentTypes =
+			filters.contentTypes.length === 0 || filters.contentTypes.includes(resource.contentType);
 		const matchesAuthor =
 			!filters.author ||
 			resource.author.toLowerCase().includes(filters.author.toLowerCase());
@@ -198,9 +196,9 @@ const filterAndSortResources = (
 
 		return (
 			matchesSearch &&
-			matchesCategory &&
-			matchesDifficulty &&
-			matchesContentType &&
+			matchesCategories &&
+			matchesDifficulties &&
+			matchesContentTypes &&
 			matchesAuthor &&
 			matchesRating &&
 			matchesDate
@@ -234,6 +232,7 @@ export default function ResourcesPage() {
 	const [showFilters, setShowFilters] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
+	const [viewMode, setViewMode] = useState<ViewMode>("grid");
 	const itemsPerPage = 12;
 
 	// Create unique IDs for skeleton cards
@@ -241,9 +240,9 @@ export default function ResourcesPage() {
 
 	const [filters, setFilters] = useState<ResourceFilters>({
 		search: "",
-		category: "Tümü",
-		difficulty: "Tümü",
-		contentType: "Tümü",
+		categories: [],
+		difficulties: [],
+		contentTypes: [],
 		author: "",
 		minRating: 0,
 		dateFrom: "",
@@ -272,21 +271,34 @@ export default function ResourcesPage() {
 	// Filtre değişikliklerinde sayfa 1'e dön
 	useEffect(() => {
 		setCurrentPage(1);
-	}, []);
+	}, [filters]);
 
 	const handleFilterChange = (
 		key: keyof ResourceFilters,
-		value: string | number,
+		value: string | number | string[],
 	) => {
 		setFilters((prev) => ({ ...prev, [key]: value }));
+	};
+
+	const handleMultiSelectToggle = (
+		key: 'categories' | 'difficulties' | 'contentTypes',
+		value: string
+	) => {
+		setFilters((prev) => {
+			const currentValues = prev[key] as string[];
+			const newValues = currentValues.includes(value)
+				? currentValues.filter(v => v !== value)
+				: [...currentValues, value];
+			return { ...prev, [key]: newValues };
+		});
 	};
 
 	const clearFilters = () => {
 		setFilters({
 			search: "",
-			category: "Tümü",
-			difficulty: "Tümü",
-			contentType: "Tümü",
+			categories: [],
+			difficulties: [],
+			contentTypes: [],
 			author: "",
 			minRating: 0,
 			dateFrom: "",
@@ -310,7 +322,10 @@ export default function ResourcesPage() {
 		if (key === "sortBy") {
 			return value !== "popular";
 		}
-		return value !== "Tümü";
+		if (Array.isArray(value)) {
+			return value.length > 0;
+		}
+		return false;
 	});
 
 	const toggleFavorite = (id: number) => {
@@ -318,45 +333,45 @@ export default function ResourcesPage() {
 		console.log(`Toggle favorite for resource ${id}`);
 	};
 
-	const renderStars = (rating: number) => {
-		return Array.from({ length: 5 }, (_, i) => (
-			<Star
-				key={i}
-				className={`w-4 h-4 ${
-					i < Math.floor(rating)
-						? "fill-yellow-400 text-yellow-400"
-						: "text-gray-300"
-				}`}
-			/>
-		));
-	};
-
-	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString("tr-TR", {
-			year: "numeric",
-			month: "long",
-			day: "numeric",
-		});
-	};
-
 	return (
-		<div className="flex flex-col min-h-screen">
+		<motion.div 
+			className="flex flex-col min-h-screen"
+			initial="initial"
+			animate="animate"
+			variants={pageVariants}
+		>
 			<Header />
 			<main className="flex-1 bg-gray-50">
 				<div className="mx-auto px-4 py-8 container">
 					{/* Page Header */}
-					<div className="mb-8">
-						<h1 className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl">
+					<motion.div 
+						className="mb-8"
+						variants={staggerContainer}
+						initial="initial"
+						animate="animate"
+					>
+						<motion.h1 
+							className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl"
+							variants={staggerItem}
+						>
 							İngilizce Öğrenme Kaynakları
-						</h1>
-						<p className="text-gray-600 text-lg">
+						</motion.h1>
+						<motion.p 
+							className="text-gray-600 text-lg"
+							variants={staggerItem}
+						>
 							Binlerce kaliteli kaynak arasından ihtiyacınıza uygun olanları
 							keşfedin
-						</p>
-					</div>
+						</motion.p>
+					</motion.div>
 
 					{/* Search and Controls */}
-					<div className="mb-8">
+					<motion.div 
+						className="mb-8"
+						variants={staggerItem}
+						initial="initial"
+						animate="animate"
+					>
 						<div className="flex lg:flex-row flex-col gap-4 mb-6">
 							{/* Search Bar */}
 							<div className="relative flex-1">
@@ -369,8 +384,39 @@ export default function ResourcesPage() {
 								/>
 							</div>
 
-							{/* Sort Dropdown */}
+							{/* Controls */}
 							<div className="flex items-center gap-4">
+								{/* View Mode Toggle */}
+								<div className="flex border rounded-md overflow-hidden">
+									<motion.button
+										onClick={() => setViewMode("grid")}
+										className={cn(
+											"p-2 transition-colors",
+											viewMode === "grid" 
+												? "bg-blue-600 text-white" 
+												: "bg-white text-gray-600 hover:bg-gray-50"
+										)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										<Grid3X3 className="w-4 h-4" />
+									</motion.button>
+									<motion.button
+										onClick={() => setViewMode("list")}
+										className={cn(
+											"p-2 transition-colors",
+											viewMode === "list" 
+												? "bg-blue-600 text-white" 
+												: "bg-white text-gray-600 hover:bg-gray-50"
+										)}
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
+										<List className="w-4 h-4" />
+									</motion.button>
+								</div>
+
+								{/* Sort Dropdown */}
 								<Select
 									value={filters.sortBy}
 									onValueChange={(value) => handleFilterChange("sortBy", value)}
@@ -388,19 +434,21 @@ export default function ResourcesPage() {
 								</Select>
 
 								{/* Filter Toggle */}
-								<Button
-									variant="outline"
-									onClick={() => setShowFilters(!showFilters)}
-									className={cn(
-										hasActiveFilters && "border-blue-500 text-blue-600",
-									)}
-								>
-									<Filter className="mr-2 w-4 h-4" />
-									Filtreler
-									{hasActiveFilters && (
-										<span className="bg-blue-500 ml-2 rounded-full w-2 h-2" />
-									)}
-								</Button>
+								<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+									<Button
+										variant="outline"
+										onClick={() => setShowFilters(!showFilters)}
+										className={cn(
+											hasActiveFilters && "border-blue-500 text-blue-600",
+										)}
+									>
+										<Filter className="mr-2 w-4 h-4" />
+										Filtreler
+										{hasActiveFilters && (
+											<span className="bg-blue-500 ml-2 rounded-full w-2 h-2" />
+										)}
+									</Button>
+								</motion.div>
 							</div>
 						</div>
 
@@ -411,222 +459,278 @@ export default function ResourcesPage() {
 								{hasActiveFilters && " (filtrelenmiş)"}
 							</span>
 							{hasActiveFilters && (
-								<Button
-									variant="ghost"
-									size="sm"
-									onClick={clearFilters}
-									className="text-blue-600 hover:text-blue-700"
-								>
-									<X className="mr-1 w-4 h-4" />
-									Filtreleri Temizle
-								</Button>
+								<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={clearFilters}
+										className="text-blue-600 hover:text-blue-700"
+									>
+										<X className="mr-1 w-4 h-4" />
+										Filtreleri Temizle
+									</Button>
+								</motion.div>
 							)}
 						</div>
-					</div>
+					</motion.div>
 
 					<div className="flex gap-8">
 						{/* Filters Sidebar */}
-						{showFilters && (
-							<div className="hidden lg:block w-80">
-								<Card className="top-8 sticky">
-									<CardContent className="p-6">
-										<h3 className="mb-6 font-semibold text-lg">Filtreler</h3>
+						<AnimatePresence>
+							{showFilters && (
+								<motion.div 
+									className="hidden lg:block w-80"
+									initial={{ opacity: 0, x: -50 }}
+									animate={{ opacity: 1, x: 0 }}
+									exit={{ opacity: 0, x: -50 }}
+									transition={{ duration: 0.3 }}
+								>
+									<Card className="top-8 sticky">
+										<CardContent className="p-6">
+											<h3 className="mb-6 font-semibold text-lg">Filtreler</h3>
 
-										{/* Category Filter */}
-										<div className="mb-6">
-											<Label className="block mb-3 font-medium">Kategori</Label>
-											<div className="gap-2 grid grid-cols-2">
-												{categories.map((category) => (
-													<Button
-														key={category}
-														variant={
-															filters.category === category
-																? "default"
-																: "outline"
-														}
-														size="sm"
-														onClick={() =>
-															handleFilterChange("category", category)
-														}
-														className="justify-start text-xs"
-													>
-														{category}
-													</Button>
-												))}
+											{/* Category Filter */}
+											<div className="mb-6">
+												<Label className="block mb-3 font-medium">Kategori</Label>
+												<div className="gap-2 grid grid-cols-2">
+													{categories.map((category) => (
+														<motion.button
+															key={category}
+															onClick={() => handleMultiSelectToggle('categories', category)}
+															className={cn(
+																"px-3 py-2 text-xs rounded-md border transition-all",
+																filters.categories.includes(category)
+																	? "bg-blue-600 text-white border-blue-600"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+															)}
+															variants={filterButtonVariants}
+															animate={filters.categories.includes(category) ? "active" : "inactive"}
+															whileHover="hover"
+														>
+															{category}
+														</motion.button>
+													))}
+												</div>
 											</div>
-										</div>
 
-										{/* Difficulty Filter */}
-										<div className="mb-6">
-											<Label className="block mb-3 font-medium">
-												Zorluk Seviyesi
-											</Label>
-											<div className="gap-2 grid">
-												{difficulties.map((difficulty) => (
-													<Button
-														key={difficulty}
-														variant={
-															filters.difficulty === difficulty
-																? "default"
-																: "outline"
-														}
-														size="sm"
-														onClick={() =>
-															handleFilterChange("difficulty", difficulty)
-														}
-														className="justify-start text-xs"
-													>
-														{difficulty}
-													</Button>
-												))}
+											{/* Difficulty Filter */}
+											<div className="mb-6">
+												<Label className="block mb-3 font-medium">
+													Zorluk Seviyesi
+												</Label>
+												<div className="gap-2 grid">
+													{difficulties.map((difficulty) => (
+														<motion.button
+															key={difficulty}
+															onClick={() => handleMultiSelectToggle('difficulties', difficulty)}
+															className={cn(
+																"px-3 py-2 text-xs rounded-md border transition-all text-left",
+																filters.difficulties.includes(difficulty)
+																	? "bg-blue-600 text-white border-blue-600"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+															)}
+															variants={filterButtonVariants}
+															animate={filters.difficulties.includes(difficulty) ? "active" : "inactive"}
+															whileHover="hover"
+														>
+															{difficulty}
+														</motion.button>
+													))}
+												</div>
 											</div>
-										</div>
 
-										{/* Content Type Filter */}
-										<div className="mb-6">
-											<Label className="block mb-3 font-medium">
-												İçerik Türü
-											</Label>
-											<div className="gap-2 grid grid-cols-2">
-												{contentTypes.map((type) => (
-													<Button
-														key={type}
-														variant={
-															filters.contentType === type
-																? "default"
-																: "outline"
-														}
-														size="sm"
-														onClick={() =>
-															handleFilterChange("contentType", type)
-														}
-														className="justify-start text-xs"
-													>
-														{type}
-													</Button>
-												))}
+											{/* Content Type Filter */}
+											<div className="mb-6">
+												<Label className="block mb-3 font-medium">
+													İçerik Türü
+												</Label>
+												<div className="gap-2 grid grid-cols-2">
+													{contentTypes.map((type) => (
+														<motion.button
+															key={type}
+															onClick={() => handleMultiSelectToggle('contentTypes', type)}
+															className={cn(
+																"px-3 py-2 text-xs rounded-md border transition-all",
+																filters.contentTypes.includes(type)
+																	? "bg-blue-600 text-white border-blue-600"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+															)}
+															variants={filterButtonVariants}
+															animate={filters.contentTypes.includes(type) ? "active" : "inactive"}
+															whileHover="hover"
+														>
+															{type}
+														</motion.button>
+													))}
+												</div>
 											</div>
-										</div>
 
-										{/* Author Filter */}
-										<div className="mb-6">
-											<Label
-												htmlFor="author"
-												className="block mb-2 font-medium"
-											>
-												Yazar
-											</Label>
-											<Input
-												id="author"
-												placeholder="Yazar adı ara..."
-												value={filters.author}
-												onChange={(e) =>
-													handleFilterChange("author", e.target.value)
-												}
-											/>
-										</div>
-
-										{/* Rating Filter */}
-										<div className="mb-6">
-											<Label className="block mb-3 font-medium">
-												Minimum Puan:{" "}
-												{filters.minRating > 0 ? filters.minRating : "Tümü"}
-											</Label>
-											<input
-												type="range"
-												min="0"
-												max="5"
-												step="0.5"
-												value={filters.minRating}
-												onChange={(e) =>
-													handleFilterChange(
-														"minRating",
-														Number.parseFloat(e.target.value),
-													)
-												}
-												className="w-full"
-											/>
-											<div className="flex justify-between text-gray-500 text-xs">
-												<span>0</span>
-												<span>5</span>
-											</div>
-										</div>
-
-										{/* Date Range Filter */}
-										<div className="mb-6">
-											<Label className="block mb-3 font-medium">
-												Yayın Tarihi
-											</Label>
-											<div className="space-y-2">
+											{/* Author Filter */}
+											<div className="mb-6">
+												<Label
+													htmlFor="author"
+													className="block mb-2 font-medium"
+												>
+													Yazar
+												</Label>
 												<Input
-													type="date"
-													value={filters.dateFrom}
+													id="author"
+													placeholder="Yazar adı ara..."
+													value={filters.author}
 													onChange={(e) =>
-														handleFilterChange("dateFrom", e.target.value)
+														handleFilterChange("author", e.target.value)
 													}
-													placeholder="Başlangıç tarihi"
-												/>
-												<Input
-													type="date"
-													value={filters.dateTo}
-													onChange={(e) =>
-														handleFilterChange("dateTo", e.target.value)
-													}
-													placeholder="Bitiş tarihi"
 												/>
 											</div>
-										</div>
 
-										{hasActiveFilters && (
-											<Button
-												variant="outline"
-												onClick={clearFilters}
-												className="w-full"
-											>
-												<X className="mr-2 w-4 h-4" />
-												Tüm Filtreleri Temizle
-											</Button>
-										)}
-									</CardContent>
-								</Card>
-							</div>
-						)}
+											{/* Rating Filter */}
+											<div className="mb-6">
+												<Label className="block mb-3 font-medium">
+													Minimum Puan:{" "}
+													{filters.minRating > 0 ? filters.minRating : "Tümü"}
+												</Label>
+												<input
+													type="range"
+													min="0"
+													max="5"
+													step="0.5"
+													value={filters.minRating}
+													onChange={(e) =>
+														handleFilterChange(
+															"minRating",
+															Number.parseFloat(e.target.value),
+														)
+													}
+													className="w-full"
+												/>
+												<div className="flex justify-between text-gray-500 text-xs">
+													<span>0</span>
+													<span>5</span>
+												</div>
+											</div>
+
+											{/* Date Range Filter */}
+											<div className="mb-6">
+												<Label className="block mb-3 font-medium">
+													Yayın Tarihi
+												</Label>
+												<div className="space-y-2">
+													<Input
+														type="date"
+														value={filters.dateFrom}
+														onChange={(e) =>
+															handleFilterChange("dateFrom", e.target.value)
+														}
+														placeholder="Başlangıç tarihi"
+													/>
+													<Input
+														type="date"
+														value={filters.dateTo}
+														onChange={(e) =>
+															handleFilterChange("dateTo", e.target.value)
+														}
+														placeholder="Bitiş tarihi"
+													/>
+												</div>
+											</div>
+
+											{hasActiveFilters && (
+												<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+													<Button
+														variant="outline"
+														onClick={clearFilters}
+														className="w-full"
+													>
+														<X className="mr-2 w-4 h-4" />
+														Tüm Filtreleri Temizle
+													</Button>
+												</motion.div>
+											)}
+										</CardContent>
+									</Card>
+								</motion.div>
+							)}
+						</AnimatePresence>
 
 						{/* Main Content */}
 						<div className="flex-1">
 							{isLoading ? (
 								// Skeleton Loading
-								<div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-									{skeletonIds.map((id) => (
-										<Card key={id} className="animate-pulse">
-											<CardContent className="p-6">
-												<div className="bg-gray-200 mb-4 rounded-lg w-full h-48" />
-												<div className="bg-gray-200 mb-2 rounded w-3/4 h-4" />
-												<div className="bg-gray-200 mb-4 rounded w-1/2 h-4" />
-												<div className="flex justify-between">
-													<div className="bg-gray-200 rounded w-20 h-4" />
-													<div className="bg-gray-200 rounded w-16 h-4" />
-												</div>
-											</CardContent>
-										</Card>
+								<motion.div 
+									className={cn(
+										"gap-6 grid",
+										viewMode === "grid" 
+											? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+											: "grid-cols-1"
+									)}
+									variants={staggerContainer}
+									initial="initial"
+									animate="animate"
+								>
+									{skeletonIds.map((id, index) => (
+										<motion.div
+											key={id}
+											variants={staggerItem}
+											custom={index}
+										>
+											<Card className="animate-pulse">
+												<CardContent className="p-6">
+													<div className="bg-gray-200 mb-4 rounded-lg w-full h-48" />
+													<div className="bg-gray-200 mb-2 rounded w-3/4 h-4" />
+													<div className="bg-gray-200 mb-4 rounded w-1/2 h-4" />
+													<div className="flex justify-between">
+														<div className="bg-gray-200 rounded w-20 h-4" />
+														<div className="bg-gray-200 rounded w-16 h-4" />
+													</div>
+												</CardContent>
+											</Card>
+										</motion.div>
 									))}
-								</div>
+								</motion.div>
 							) : (
 								<>
-									{/* Resources Grid */}
-									<div className="gap-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-										{paginatedResources.map((resource) => (
-											<ResourceCard
-												key={resource.id}
-												resource={resource}
-												onToggleFavorite={toggleFavorite}
-											/>
-										))}
-									</div>
+									{/* Resources Grid/List */}
+									<AnimatePresence mode="wait">
+										<motion.div 
+											key={`${viewMode}-${JSON.stringify(filters)}`}
+											className={cn(
+												"gap-6 grid",
+												viewMode === "grid" 
+													? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+													: "grid-cols-1"
+											)}
+											variants={staggerContainer}
+											initial="initial"
+											animate="animate"
+											exit="exit"
+										>
+											{paginatedResources.map((resource, index) => (
+												<motion.div
+													key={resource.id}
+													variants={staggerItem}
+													custom={index}
+													layout
+												>
+													<motion.div variants={cardHover}>
+														<ResourceCard
+															resource={resource}
+															onToggleFavorite={toggleFavorite}
+															viewMode={viewMode}
+														/>
+													</motion.div>
+												</motion.div>
+											))}
+										</motion.div>
+									</AnimatePresence>
 
 									{/* No Results */}
 									{filteredResources.length === 0 && (
-										<div className="py-16 text-center">
+										<motion.div 
+											className="py-16 text-center"
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ duration: 0.6 }}
+										>
 											<BookOpen className="mx-auto mb-4 w-16 h-16 text-gray-400" />
 											<h3 className="mb-2 font-semibold text-gray-900 text-xl">
 												Kaynak Bulunamadı
@@ -635,33 +739,44 @@ export default function ResourcesPage() {
 												Arama kriterlerinize uygun kaynak bulunamadı. Filtreleri
 												değiştirmeyi deneyin.
 											</p>
-											<Button onClick={clearFilters} variant="outline">
-												Filtreleri Temizle
-											</Button>
-										</div>
+											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+												<Button onClick={clearFilters} variant="outline">
+													Filtreleri Temizle
+												</Button>
+											</motion.div>
+										</motion.div>
 									)}
 
 									{/* Pagination */}
 									{totalPages > 1 && (
-										<div className="flex justify-center items-center gap-2 mt-12">
-											<Button
-												variant="outline"
-												onClick={() =>
-													setCurrentPage((prev) => Math.max(1, prev - 1))
-												}
-												disabled={currentPage === 1}
-											>
-												Önceki
-											</Button>
+										<motion.div 
+											className="flex justify-center items-center gap-2 mt-12"
+											initial={{ opacity: 0, y: 20 }}
+											animate={{ opacity: 1, y: 0 }}
+											transition={{ delay: 0.3, duration: 0.6 }}
+										>
+											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+												<Button
+													variant="outline"
+													onClick={() =>
+														setCurrentPage((prev) => Math.max(1, prev - 1))
+													}
+													disabled={currentPage === 1}
+												>
+													Önceki
+												</Button>
+											</motion.div>
 
 											{/* First page */}
-											<Button
-												variant={currentPage === 1 ? "default" : "outline"}
-												onClick={() => setCurrentPage(1)}
-												className="w-10"
-											>
-												1
-											</Button>
+											<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+												<Button
+													variant={currentPage === 1 ? "default" : "outline"}
+													onClick={() => setCurrentPage(1)}
+													className="w-10"
+												>
+													1
+												</Button>
+											</motion.div>
 
 											{/* Ellipsis if needed */}
 											{currentPage > 3 && (
@@ -676,16 +791,21 @@ export default function ResourcesPage() {
 												);
 												if (pageNum <= 1 || pageNum >= totalPages) return null;
 												return (
-													<Button
+													<motion.div 
 														key={`pagination-${pageNum}`}
-														variant={
-															currentPage === pageNum ? "default" : "outline"
-														}
-														onClick={() => setCurrentPage(pageNum)}
-														className="w-10"
+														whileHover={{ scale: 1.05 }} 
+														whileTap={{ scale: 0.95 }}
 													>
-														{pageNum}
-													</Button>
+														<Button
+															variant={
+																currentPage === pageNum ? "default" : "outline"
+															}
+															onClick={() => setCurrentPage(pageNum)}
+															className="w-10"
+														>
+															{pageNum}
+														</Button>
+													</motion.div>
 												);
 											})}
 
@@ -696,29 +816,33 @@ export default function ResourcesPage() {
 
 											{/* Last page */}
 											{totalPages > 1 && (
-												<Button
-													variant={
-														currentPage === totalPages ? "default" : "outline"
-													}
-													onClick={() => setCurrentPage(totalPages)}
-													className="w-10"
-												>
-													{totalPages}
-												</Button>
+												<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+													<Button
+														variant={
+															currentPage === totalPages ? "default" : "outline"
+														}
+														onClick={() => setCurrentPage(totalPages)}
+														className="w-10"
+													>
+														{totalPages}
+													</Button>
+												</motion.div>
 											)}
 
-											<Button
-												variant="outline"
-												onClick={() =>
-													setCurrentPage((prev) =>
-														Math.min(totalPages, prev + 1),
-													)
-												}
-												disabled={currentPage === totalPages}
-											>
-												Sonraki
-											</Button>
-										</div>
+											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+												<Button
+													variant="outline"
+													onClick={() =>
+														setCurrentPage((prev) =>
+															Math.min(totalPages, prev + 1),
+														)
+													}
+													disabled={currentPage === totalPages}
+												>
+													Sonraki
+												</Button>
+											</motion.div>
+										</motion.div>
 									)}
 								</>
 							)}
@@ -727,6 +851,6 @@ export default function ResourcesPage() {
 				</div>
 			</main>
 			<Footer />
-		</div>
+		</motion.div>
 	);
 }

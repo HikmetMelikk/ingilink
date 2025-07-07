@@ -24,9 +24,9 @@ export interface Resource {
 
 export interface ResourceFilters {
 	search: string;
-	category: string;
-	difficulty: string;
-	contentType: string;
+	categories: string[]; // Changed from category to categories for multi-select
+	difficulties: string[]; // Changed from difficulty to difficulties for multi-select
+	contentTypes: string[]; // Changed from contentType to contentTypes for multi-select
 	author: string;
 	minRating: number;
 	dateFrom: string;
@@ -45,3 +45,5 @@ export interface ResourcesResponse {
 }
 
 export type SortOption = "popular" | "rating" | "newest" | "oldest" | "title";
+
+export type ViewMode = "grid" | "list";

@@ -1,6 +1,16 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { 
+	staggerContainer, 
+	staggerItem, 
+	cardHover, 
+	buttonHover,
+	scrollTriggered 
+} from "@/lib/motion-variants";
+import { motion } from "framer-motion";
 import { Download, Eye, Heart, Star, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -126,114 +136,152 @@ const getCategoryColor = (category: string) => {
 
 export function FeaturedResources() {
 	return (
-		<section className="bg-white py-20">
+		<motion.section 
+			className="bg-white py-20"
+			{...scrollTriggered}
+		>
 			<div className="mx-auto px-4 container">
-				<div className="mb-16 text-center">
-					<h2 className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl">
+				<motion.div 
+					className="mb-16 text-center"
+					variants={staggerContainer}
+					initial="initial"
+					whileInView="animate"
+					viewport={{ once: true }}
+				>
+					<motion.h2 
+						className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl"
+						variants={staggerItem}
+					>
 						Öne Çıkan Kaynaklar
-					</h2>
-					<p className="mx-auto max-w-2xl text-gray-600 text-xl">
+					</motion.h2>
+					<motion.p 
+						className="mx-auto max-w-2xl text-gray-600 text-xl"
+						variants={staggerItem}
+					>
 						Topluluğumuzun en beğenilen ve en çok kullanılan İngilizce öğrenme
 						kaynaklarını keşfedin
-					</p>
-				</div>
+					</motion.p>
+				</motion.div>
 
-				<div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12">
-					{featuredResources.map((resource) => (
-						<Card
+				<motion.div 
+					className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 mb-12"
+					variants={staggerContainer}
+					initial="initial"
+					whileInView="animate"
+					viewport={{ once: true }}
+				>
+					{featuredResources.map((resource, index) => (
+						<motion.div
 							key={resource.id}
-							className="group shadow-md hover:shadow-xl border-0 transition-all duration-300"
+							variants={staggerItem}
+							custom={index}
 						>
-							<div className="relative rounded-t-lg overflow-hidden">
-								<Image
-									src={resource.image}
-									alt={resource.title}
-									width={1000}
-									height={1000}
-									className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-								/>
-								<div className="top-4 right-4 absolute">
-									<Button
-										variant="ghost"
-										size="icon"
-										className="bg-white/80 hover:bg-white"
-									>
-										<Heart className="w-4 h-4" />
-									</Button>
-								</div>
-								<div className="bottom-4 left-4 absolute">
-									<Badge
-										variant="secondary"
-										className="bg-white/90 text-gray-800"
-									>
-										{resource.type}
-									</Badge>
-								</div>
-							</div>
-
-							<CardHeader className="pb-3">
-								<div className="flex justify-between items-start mb-2">
-									<CardTitle className="group-hover:text-blue-600 text-lg line-clamp-2 transition-colors">
-										<Link href={`/resources/${resource.id}`}>
-											{resource.title}
-										</Link>
-									</CardTitle>
-								</div>
-								<p className="mb-3 text-gray-600 text-sm line-clamp-2">
-									{resource.description}
-								</p>
-								<div className="flex items-center gap-2 mb-3">
-									<Badge className={getCategoryColor(resource.category)}>
-										{resource.category}
-									</Badge>
-									<Badge
-										variant="outline"
-										className={getDifficultyColor(resource.difficulty)}
-									>
-										{resource.difficulty}
-									</Badge>
-								</div>
-							</CardHeader>
-
-							<CardContent className="pt-0">
-								<div className="flex justify-between items-center mb-4 text-gray-500 text-sm">
-									<div className="flex items-center gap-4">
-										<div className="flex items-center">
-											<Star className="fill-yellow-400 mr-1 w-4 h-4 text-yellow-400" />
-											<span className="font-medium">{resource.rating}</span>
+							<motion.div variants={cardHover}>
+								<Card className="group shadow-md hover:shadow-xl border-0 transition-all duration-300">
+									<div className="relative rounded-t-lg overflow-hidden">
+										<Image
+											src={resource.image}
+											alt={resource.title}
+											width={1000}
+											height={1000}
+											className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+										/>
+										<div className="top-4 right-4 absolute">
+											<motion.div variants={buttonHover}>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="bg-white/80 hover:bg-white"
+												>
+													<Heart className="w-4 h-4" />
+												</Button>
+											</motion.div>
 										</div>
-										<div className="flex items-center">
-											<Eye className="mr-1 w-4 h-4" />
-											<span>{resource.views}</span>
+										<div className="bottom-4 left-4 absolute">
+											<Badge
+												variant="secondary"
+												className="bg-white/90 text-gray-800"
+											>
+												{resource.type}
+											</Badge>
 										</div>
 									</div>
-								</div>
 
-								<div className="flex justify-between items-center">
-									<div className="flex items-center text-gray-600 text-sm">
-										<User className="mr-1 w-4 h-4" />
-										<span>{resource.author}</span>
-									</div>
-									<Button
-										size="sm"
-										variant="outline"
-										className="hover:bg-blue-50 hover:text-blue-600"
-									>
-										<Download className="mr-1 w-4 h-4" />
-										İndir
-									</Button>
-								</div>
-							</CardContent>
-						</Card>
+									<CardHeader className="pb-3">
+										<div className="flex justify-between items-start mb-2">
+											<CardTitle className="group-hover:text-blue-600 text-lg line-clamp-2 transition-colors">
+												<Link href={`/resources/${resource.id}`}>
+													{resource.title}
+												</Link>
+											</CardTitle>
+										</div>
+										<p className="mb-3 text-gray-600 text-sm line-clamp-2">
+											{resource.description}
+										</p>
+										<div className="flex items-center gap-2 mb-3">
+											<Badge className={getCategoryColor(resource.category)}>
+												{resource.category}
+											</Badge>
+											<Badge
+												variant="outline"
+												className={getDifficultyColor(resource.difficulty)}
+											>
+												{resource.difficulty}
+											</Badge>
+										</div>
+									</CardHeader>
+
+									<CardContent className="pt-0">
+										<div className="flex justify-between items-center mb-4 text-gray-500 text-sm">
+											<div className="flex items-center gap-4">
+												<div className="flex items-center">
+													<Star className="fill-yellow-400 mr-1 w-4 h-4 text-yellow-400" />
+													<span className="font-medium">{resource.rating}</span>
+												</div>
+												<div className="flex items-center">
+													<Eye className="mr-1 w-4 h-4" />
+													<span>{resource.views}</span>
+												</div>
+											</div>
+										</div>
+
+										<div className="flex justify-between items-center">
+											<div className="flex items-center text-gray-600 text-sm">
+												<User className="mr-1 w-4 h-4" />
+												<span>{resource.author}</span>
+											</div>
+											<motion.div variants={buttonHover}>
+												<Button
+													size="sm"
+													variant="outline"
+													className="hover:bg-blue-50 hover:text-blue-600"
+												>
+													<Download className="mr-1 w-4 h-4" />
+													İndir
+												</Button>
+											</motion.div>
+										</div>
+									</CardContent>
+								</Card>
+							</motion.div>
+						</motion.div>
 					))}
-				</div>
+				</motion.div>
 
-				<div className="text-center">
-					<Button asChild size="lg" variant="outline" className="border-2">
-						<Link href="/resources">Tüm Kaynakları Görüntüle</Link>
-					</Button>
-				</div>
+				<motion.div 
+					className="text-center"
+					variants={staggerItem}
+					initial="initial"
+					whileInView="animate"
+					viewport={{ once: true }}
+				>
+					<motion.div variants={buttonHover}>
+						<Button asChild size="lg" variant="outline" className="border-2">
+							<Link href="/resources">Tüm Kaynakları Görüntüle</Link>
+						</Button>
+					</motion.div>
+				</motion.div>
 			</div>
-		</section>
+		</motion.section>
 	);
 }
