@@ -1,0 +1,270 @@
+import { 
+	BookOpen, 
+	Volume2, 
+	Eye, 
+	PenTool, 
+	Mic, 
+	MessageCircle,
+	Headphones,
+	FileText,
+	Video,
+	Users,
+	Trophy,
+	Clock,
+	Star,
+	Zap,
+	Target,
+	Globe
+} from "lucide-react";
+import type { NavigationItem } from "@/types/navigation";
+
+export const navigationData: NavigationItem[] = [
+	{
+		id: "resources",
+		label: "Kaynaklar",
+		icon: BookOpen,
+		description: "İngilizce öğrenme kaynaklarını keşfedin",
+		children: [
+			{
+				id: "listening",
+				label: "Listening",
+				href: "/resources/listening",
+				icon: Volume2,
+				description: "Dinleme becerilerinizi geliştirin",
+				children: [
+					{
+						id: "podcasts",
+						label: "Podcasts",
+						href: "/resources/listening/podcasts",
+						description: "İngilizce podcast'ler",
+						icon: Headphones
+					},
+					{
+						id: "audiobooks",
+						label: "Audiobooks",
+						href: "/resources/listening/audiobooks",
+						description: "Sesli kitaplar",
+						icon: BookOpen
+					},
+					{
+						id: "conversations",
+						label: "Conversations",
+						href: "/resources/listening/conversations",
+						description: "Günlük konuşmalar",
+						icon: Users
+					},
+					{
+						id: "ielts-listening",
+						label: "IELTS Listening",
+						href: "/resources/listening/ielts",
+						description: "IELTS dinleme testleri",
+						icon: Trophy
+					}
+				]
+			},
+			{
+				id: "reading",
+				label: "Reading",
+				href: "/resources/reading",
+				icon: Eye,
+				description: "Okuma anlama becerilerinizi artırın",
+				children: [
+					{
+						id: "articles",
+						label: "Articles",
+						href: "/resources/reading/articles",
+						description: "İngilizce makaleler",
+						icon: FileText
+					},
+					{
+						id: "short-stories",
+						label: "Short Stories",
+						href: "/resources/reading/stories",
+						description: "Kısa hikayeler",
+						icon: BookOpen
+					},
+					{
+						id: "news",
+						label: "News",
+						href: "/resources/reading/news",
+						description: "Güncel haberler",
+						icon: Globe
+					},
+					{
+						id: "ielts-reading",
+						label: "IELTS Reading",
+						href: "/resources/reading/ielts",
+						description: "IELTS okuma testleri",
+						icon: Trophy
+					}
+				]
+			},
+			{
+				id: "writing",
+				label: "Writing",
+				href: "/resources/writing",
+				icon: PenTool,
+				description: "Yazma becerilerinizi mükemmelleştirin",
+				children: [
+					{
+						id: "essays",
+						label: "Essays",
+						href: "/resources/writing/essays",
+						description: "Deneme yazıları",
+						icon: FileText
+					},
+					{
+						id: "business-writing",
+						label: "Business Writing",
+						href: "/resources/writing/business",
+						description: "İş yazışmaları",
+						icon: Target
+					},
+					{
+						id: "creative-writing",
+						label: "Creative Writing",
+						href: "/resources/writing/creative",
+						description: "Yaratıcı yazım",
+						icon: Star
+					},
+					{
+						id: "ielts-writing",
+						label: "IELTS Writing",
+						href: "/resources/writing/ielts",
+						description: "IELTS yazma testleri",
+						icon: Trophy
+					}
+				]
+			},
+			{
+				id: "speaking",
+				label: "Speaking",
+				href: "/resources/speaking",
+				icon: Mic,
+				description: "Konuşma becerilerinizi geliştirin",
+				children: [
+					{
+						id: "pronunciation",
+						label: "Pronunciation",
+						href: "/resources/speaking/pronunciation",
+						description: "Telaffuz çalışmaları",
+						icon: Volume2
+					},
+					{
+						id: "conversation-practice",
+						label: "Conversation Practice",
+						href: "/resources/speaking/conversation",
+						description: "Konuşma pratiği",
+						icon: Users
+					},
+					{
+						id: "presentation-skills",
+						label: "Presentation Skills",
+						href: "/resources/speaking/presentations",
+						description: "Sunum becerileri",
+						icon: Video
+					},
+					{
+						id: "ielts-speaking",
+						label: "IELTS Speaking",
+						href: "/resources/speaking/ielts",
+						description: "IELTS konuşma testleri",
+						icon: Trophy
+					}
+				]
+			},
+			{
+				id: "vocabulary",
+				label: "Vocabulary",
+				href: "/resources/vocabulary",
+				icon: MessageCircle,
+				description: "Kelime hazinenizi genişletin",
+				children: [
+					{
+						id: "daily-words",
+						label: "Daily Words",
+						href: "/resources/vocabulary/daily",
+						description: "Günlük kelimeler",
+						icon: Clock
+					},
+					{
+						id: "business-vocabulary",
+						label: "Business Vocabulary",
+						href: "/resources/vocabulary/business",
+						description: "İş dünyası kelimeleri",
+						icon: Target
+					},
+					{
+						id: "academic-vocabulary",
+						label: "Academic Vocabulary",
+						href: "/resources/vocabulary/academic",
+						description: "Akademik kelimeler",
+						icon: BookOpen
+					},
+					{
+						id: "phrasal-verbs",
+						label: "Phrasal Verbs",
+						href: "/resources/vocabulary/phrasal-verbs",
+						description: "Deyimsel fiiller",
+						icon: Zap
+					}
+				]
+			},
+			{
+				id: "grammar",
+				label: "Grammar",
+				href: "/resources/grammar",
+				icon: BookOpen,
+				description: "Dilbilgisi kurallarını öğrenin",
+				children: [
+					{
+						id: "basic-grammar",
+						label: "Basic Grammar",
+						href: "/resources/grammar/basic",
+						description: "Temel dilbilgisi",
+						icon: BookOpen
+					},
+					{
+						id: "advanced-grammar",
+						label: "Advanced Grammar",
+						href: "/resources/grammar/advanced",
+						description: "İleri seviye dilbilgisi",
+						icon: Star
+					},
+					{
+						id: "tenses",
+						label: "Tenses",
+						href: "/resources/grammar/tenses",
+						description: "Zamanlar",
+						icon: Clock
+					},
+					{
+						id: "conditionals",
+						label: "Conditionals",
+						href: "/resources/grammar/conditionals",
+						description: "Koşul cümleleri",
+						icon: Target
+					}
+				]
+			}
+		]
+	},
+	{
+		id: "discover",
+		label: "Keşfet",
+		href: "/discover",
+		description: "Yeni kaynakları keşfedin"
+	},
+	{
+		id: "about",
+		label: "Hakkımızda",
+		href: "/about",
+		description: "ingilink hakkında bilgi edinin"
+	},
+	{
+		id: "community",
+		label: "Topluluk",
+		href: "/community",
+		description: "Öğrenci topluluğuna katılın"
+	}
+];
