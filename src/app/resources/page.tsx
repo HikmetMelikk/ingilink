@@ -14,17 +14,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { 
-	pageVariants, 
-	staggerContainer, 
-	staggerItem, 
+import {
+	cardHover,
 	filterButtonVariants,
-	cardHover 
+	pageVariants,
+	staggerContainer,
+	staggerItem,
 } from "@/lib/motion-variants";
-import { motion, AnimatePresence } from "framer-motion";
+import { cn } from "@/lib/utils";
 import type { Resource, ResourceFilters, ViewMode } from "@/types/resource";
-import { BookOpen, Filter, Search, Star, X, Grid3X3, List } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { BookOpen, Filter, Grid3X3, List, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 // Mock data - gerçek uygulamada API'den gelecek
@@ -145,7 +145,14 @@ const mockResources = [
 	},
 ];
 
-const categories = ["Grammar", "Vocabulary", "Listening", "Speaking", "Writing", "Reading"];
+const categories = [
+	"Grammar",
+	"Vocabulary",
+	"Listening",
+	"Speaking",
+	"Writing",
+	"Reading",
+];
 const difficulties = ["Beginner", "Intermediate", "Advanced"];
 const contentTypes = ["PDF", "Video", "Audio", "Article", "Test"];
 const sortOptions = [
@@ -172,11 +179,14 @@ const filterAndSortResources = (
 			);
 
 		const matchesCategories =
-			filters.categories.length === 0 || filters.categories.includes(resource.category);
+			filters.categories.length === 0 ||
+			filters.categories.includes(resource.category);
 		const matchesDifficulties =
-			filters.difficulties.length === 0 || filters.difficulties.includes(resource.difficulty);
+			filters.difficulties.length === 0 ||
+			filters.difficulties.includes(resource.difficulty);
 		const matchesContentTypes =
-			filters.contentTypes.length === 0 || filters.contentTypes.includes(resource.contentType);
+			filters.contentTypes.length === 0 ||
+			filters.contentTypes.includes(resource.contentType);
 		const matchesAuthor =
 			!filters.author ||
 			resource.author.toLowerCase().includes(filters.author.toLowerCase());
@@ -271,7 +281,7 @@ export default function ResourcesPage() {
 	// Filtre değişikliklerinde sayfa 1'e dön
 	useEffect(() => {
 		setCurrentPage(1);
-	}, [filters]);
+	}, []);
 
 	const handleFilterChange = (
 		key: keyof ResourceFilters,
@@ -281,13 +291,13 @@ export default function ResourcesPage() {
 	};
 
 	const handleMultiSelectToggle = (
-		key: 'categories' | 'difficulties' | 'contentTypes',
-		value: string
+		key: "categories" | "difficulties" | "contentTypes",
+		value: string,
 	) => {
 		setFilters((prev) => {
 			const currentValues = prev[key] as string[];
 			const newValues = currentValues.includes(value)
-				? currentValues.filter(v => v !== value)
+				? currentValues.filter((v) => v !== value)
 				: [...currentValues, value];
 			return { ...prev, [key]: newValues };
 		});
@@ -334,7 +344,7 @@ export default function ResourcesPage() {
 	};
 
 	return (
-		<motion.div 
+		<motion.div
 			className="flex flex-col min-h-screen"
 			initial="initial"
 			animate="animate"
@@ -344,29 +354,26 @@ export default function ResourcesPage() {
 			<main className="flex-1 bg-gray-50">
 				<div className="mx-auto px-4 py-8 container">
 					{/* Page Header */}
-					<motion.div 
+					<motion.div
 						className="mb-8"
 						variants={staggerContainer}
 						initial="initial"
 						animate="animate"
 					>
-						<motion.h1 
+						<motion.h1
 							className="mb-4 font-bold text-gray-900 text-3xl md:text-4xl"
 							variants={staggerItem}
 						>
 							İngilizce Öğrenme Kaynakları
 						</motion.h1>
-						<motion.p 
-							className="text-gray-600 text-lg"
-							variants={staggerItem}
-						>
+						<motion.p className="text-gray-600 text-lg" variants={staggerItem}>
 							Binlerce kaliteli kaynak arasından ihtiyacınıza uygun olanları
 							keşfedin
 						</motion.p>
 					</motion.div>
 
 					{/* Search and Controls */}
-					<motion.div 
+					<motion.div
 						className="mb-8"
 						variants={staggerItem}
 						initial="initial"
@@ -392,9 +399,9 @@ export default function ResourcesPage() {
 										onClick={() => setViewMode("grid")}
 										className={cn(
 											"p-2 transition-colors",
-											viewMode === "grid" 
-												? "bg-blue-600 text-white" 
-												: "bg-white text-gray-600 hover:bg-gray-50"
+											viewMode === "grid"
+												? "bg-blue-600 text-white"
+												: "bg-white text-gray-600 hover:bg-gray-50",
 										)}
 										whileHover={{ scale: 1.05 }}
 										whileTap={{ scale: 0.95 }}
@@ -405,9 +412,9 @@ export default function ResourcesPage() {
 										onClick={() => setViewMode("list")}
 										className={cn(
 											"p-2 transition-colors",
-											viewMode === "list" 
-												? "bg-blue-600 text-white" 
-												: "bg-white text-gray-600 hover:bg-gray-50"
+											viewMode === "list"
+												? "bg-blue-600 text-white"
+												: "bg-white text-gray-600 hover:bg-gray-50",
 										)}
 										whileHover={{ scale: 1.05 }}
 										whileTap={{ scale: 0.95 }}
@@ -434,7 +441,10 @@ export default function ResourcesPage() {
 								</Select>
 
 								{/* Filter Toggle */}
-								<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+								<motion.div
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+								>
 									<Button
 										variant="outline"
 										onClick={() => setShowFilters(!showFilters)}
@@ -459,7 +469,10 @@ export default function ResourcesPage() {
 								{hasActiveFilters && " (filtrelenmiş)"}
 							</span>
 							{hasActiveFilters && (
-								<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+								<motion.div
+									whileHover={{ scale: 1.02 }}
+									whileTap={{ scale: 0.98 }}
+								>
 									<Button
 										variant="ghost"
 										size="sm"
@@ -478,7 +491,7 @@ export default function ResourcesPage() {
 						{/* Filters Sidebar */}
 						<AnimatePresence>
 							{showFilters && (
-								<motion.div 
+								<motion.div
 									className="hidden lg:block w-80"
 									initial={{ opacity: 0, x: -50 }}
 									animate={{ opacity: 1, x: 0 }}
@@ -491,20 +504,28 @@ export default function ResourcesPage() {
 
 											{/* Category Filter */}
 											<div className="mb-6">
-												<Label className="block mb-3 font-medium">Kategori</Label>
+												<Label className="block mb-3 font-medium">
+													Kategori
+												</Label>
 												<div className="gap-2 grid grid-cols-2">
 													{categories.map((category) => (
 														<motion.button
 															key={category}
-															onClick={() => handleMultiSelectToggle('categories', category)}
+															onClick={() =>
+																handleMultiSelectToggle("categories", category)
+															}
 															className={cn(
 																"px-3 py-2 text-xs rounded-md border transition-all",
 																filters.categories.includes(category)
 																	? "bg-blue-600 text-white border-blue-600"
-																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300",
 															)}
 															variants={filterButtonVariants}
-															animate={filters.categories.includes(category) ? "active" : "inactive"}
+															animate={
+																filters.categories.includes(category)
+																	? "active"
+																	: "inactive"
+															}
 															whileHover="hover"
 														>
 															{category}
@@ -522,15 +543,24 @@ export default function ResourcesPage() {
 													{difficulties.map((difficulty) => (
 														<motion.button
 															key={difficulty}
-															onClick={() => handleMultiSelectToggle('difficulties', difficulty)}
+															onClick={() =>
+																handleMultiSelectToggle(
+																	"difficulties",
+																	difficulty,
+																)
+															}
 															className={cn(
 																"px-3 py-2 text-xs rounded-md border transition-all text-left",
 																filters.difficulties.includes(difficulty)
 																	? "bg-blue-600 text-white border-blue-600"
-																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300",
 															)}
 															variants={filterButtonVariants}
-															animate={filters.difficulties.includes(difficulty) ? "active" : "inactive"}
+															animate={
+																filters.difficulties.includes(difficulty)
+																	? "active"
+																	: "inactive"
+															}
 															whileHover="hover"
 														>
 															{difficulty}
@@ -548,15 +578,21 @@ export default function ResourcesPage() {
 													{contentTypes.map((type) => (
 														<motion.button
 															key={type}
-															onClick={() => handleMultiSelectToggle('contentTypes', type)}
+															onClick={() =>
+																handleMultiSelectToggle("contentTypes", type)
+															}
 															className={cn(
 																"px-3 py-2 text-xs rounded-md border transition-all",
 																filters.contentTypes.includes(type)
 																	? "bg-blue-600 text-white border-blue-600"
-																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300"
+																	: "bg-white text-gray-700 border-gray-300 hover:border-blue-300",
 															)}
 															variants={filterButtonVariants}
-															animate={filters.contentTypes.includes(type) ? "active" : "inactive"}
+															animate={
+																filters.contentTypes.includes(type)
+																	? "active"
+																	: "inactive"
+															}
 															whileHover="hover"
 														>
 															{type}
@@ -635,7 +671,10 @@ export default function ResourcesPage() {
 											</div>
 
 											{hasActiveFilters && (
-												<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+												<motion.div
+													whileHover={{ scale: 1.02 }}
+													whileTap={{ scale: 0.98 }}
+												>
 													<Button
 														variant="outline"
 														onClick={clearFilters}
@@ -656,23 +695,19 @@ export default function ResourcesPage() {
 						<div className="flex-1">
 							{isLoading ? (
 								// Skeleton Loading
-								<motion.div 
+								<motion.div
 									className={cn(
 										"gap-6 grid",
-										viewMode === "grid" 
+										viewMode === "grid"
 											? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-											: "grid-cols-1"
+											: "grid-cols-1",
 									)}
 									variants={staggerContainer}
 									initial="initial"
 									animate="animate"
 								>
 									{skeletonIds.map((id, index) => (
-										<motion.div
-											key={id}
-											variants={staggerItem}
-											custom={index}
-										>
+										<motion.div key={id} variants={staggerItem} custom={index}>
 											<Card className="animate-pulse">
 												<CardContent className="p-6">
 													<div className="bg-gray-200 mb-4 rounded-lg w-full h-48" />
@@ -691,13 +726,13 @@ export default function ResourcesPage() {
 								<>
 									{/* Resources Grid/List */}
 									<AnimatePresence mode="wait">
-										<motion.div 
+										<motion.div
 											key={`${viewMode}-${JSON.stringify(filters)}`}
 											className={cn(
 												"gap-6 grid",
-												viewMode === "grid" 
+												viewMode === "grid"
 													? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-													: "grid-cols-1"
+													: "grid-cols-1",
 											)}
 											variants={staggerContainer}
 											initial="initial"
@@ -725,7 +760,7 @@ export default function ResourcesPage() {
 
 									{/* No Results */}
 									{filteredResources.length === 0 && (
-										<motion.div 
+										<motion.div
 											className="py-16 text-center"
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
@@ -739,7 +774,10 @@ export default function ResourcesPage() {
 												Arama kriterlerinize uygun kaynak bulunamadı. Filtreleri
 												değiştirmeyi deneyin.
 											</p>
-											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+											<motion.div
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
+											>
 												<Button onClick={clearFilters} variant="outline">
 													Filtreleri Temizle
 												</Button>
@@ -749,13 +787,16 @@ export default function ResourcesPage() {
 
 									{/* Pagination */}
 									{totalPages > 1 && (
-										<motion.div 
+										<motion.div
 											className="flex justify-center items-center gap-2 mt-12"
 											initial={{ opacity: 0, y: 20 }}
 											animate={{ opacity: 1, y: 0 }}
 											transition={{ delay: 0.3, duration: 0.6 }}
 										>
-											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+											<motion.div
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
+											>
 												<Button
 													variant="outline"
 													onClick={() =>
@@ -768,7 +809,10 @@ export default function ResourcesPage() {
 											</motion.div>
 
 											{/* First page */}
-											<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+											<motion.div
+												whileHover={{ scale: 1.05 }}
+												whileTap={{ scale: 0.95 }}
+											>
 												<Button
 													variant={currentPage === 1 ? "default" : "outline"}
 													onClick={() => setCurrentPage(1)}
@@ -791,9 +835,9 @@ export default function ResourcesPage() {
 												);
 												if (pageNum <= 1 || pageNum >= totalPages) return null;
 												return (
-													<motion.div 
+													<motion.div
 														key={`pagination-${pageNum}`}
-														whileHover={{ scale: 1.05 }} 
+														whileHover={{ scale: 1.05 }}
 														whileTap={{ scale: 0.95 }}
 													>
 														<Button
@@ -816,7 +860,10 @@ export default function ResourcesPage() {
 
 											{/* Last page */}
 											{totalPages > 1 && (
-												<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+												<motion.div
+													whileHover={{ scale: 1.05 }}
+													whileTap={{ scale: 0.95 }}
+												>
 													<Button
 														variant={
 															currentPage === totalPages ? "default" : "outline"
@@ -829,7 +876,10 @@ export default function ResourcesPage() {
 												</motion.div>
 											)}
 
-											<motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+											<motion.div
+												whileHover={{ scale: 1.02 }}
+												whileTap={{ scale: 0.98 }}
+											>
 												<Button
 													variant="outline"
 													onClick={() =>

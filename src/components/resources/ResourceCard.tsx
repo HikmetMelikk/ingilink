@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Calendar, Download, Eye, Heart, Star, User } from "lucide-react";
 import Image from "next/image";
@@ -67,10 +66,10 @@ export function ResourceCard({
 				exit={{ opacity: 0, y: -20 }}
 				transition={{ duration: 0.3 }}
 			>
-				<Card className="group shadow-md hover:shadow-xl border-0 transition-all duration-300 overflow-hidden">
+				<Card className="group shadow-md hover:shadow-xl border-0 overflow-hidden transition-all duration-300">
 					<div className="flex">
 						{/* Image Section */}
-						<div className="relative w-48 h-32 flex-shrink-0">
+						<div className="relative flex-shrink-0 w-48 h-32">
 							<Link href={`/resources/${resource.id}`}>
 								<Image
 									src={resource.thumbnail}
@@ -149,7 +148,10 @@ export function ResourceCard({
 										<Calendar className="inline mr-1 w-3 h-3" />
 										{formatDate(resource.publishDate)}
 									</span>
-									<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+									<motion.div
+										whileHover={{ scale: 1.05 }}
+										whileTap={{ scale: 0.95 }}
+									>
 										<Button size="sm" variant="outline">
 											<Download className="mr-1 w-4 h-4" />
 											İndir
@@ -251,7 +253,10 @@ export function ResourceCard({
 								<Calendar className="inline mr-1 w-3 h-3" />
 								{formatDate(resource.publishDate)}
 							</span>
-							<motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+							<motion.div
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+							>
 								<Button size="sm" variant="outline">
 									<Download className="mr-1 w-4 h-4" />
 									İndir
