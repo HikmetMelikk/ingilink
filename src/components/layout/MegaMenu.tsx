@@ -21,7 +21,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	});
 	const [searchQuery, setSearchQuery] = useState("");
 	const [isMobile, setIsMobile] = useState(false);
-	const timeoutRef = useRef<NodeJS.Timeout>();
+	const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	// Check if mobile
@@ -38,7 +38,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-				setMenuState(prev => ({ ...prev, isOpen: false, activeItem: null }));
+				setMenuState((prev) => ({ ...prev, isOpen: false, activeItem: null }));
 			}
 		};
 
@@ -50,7 +50,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	useEffect(() => {
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.key === "Escape") {
-				setMenuState(prev => ({ ...prev, isOpen: false, activeItem: null }));
+				setMenuState((prev) => ({ ...prev, isOpen: false, activeItem: null }));
 			}
 		};
 
@@ -61,8 +61,9 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	const handleMouseEnter = useCallback((itemId: string) => {
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
+			timeoutRef.current = null;
 		}
-		setMenuState(prev => ({
+		setMenuState((prev) => ({
 			...prev,
 			isOpen: true,
 			activeItem: itemId,
@@ -71,18 +72,21 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	}, []);
 
 	const handleMouseLeave = useCallback(() => {
+		if (timeoutRef.current) {
+			clearTimeout(timeoutRef.current);
+		}
 		timeoutRef.current = setTimeout(() => {
-			setMenuState(prev => ({
+			setMenuState((prev) => ({
 				...prev,
 				isOpen: false,
 				activeItem: null,
 				hoveredItem: null,
 			}));
-		}, 150);
+		}, 300); // Increased from 150ms to 300ms
 	}, []);
 
 	const handleClick = useCallback((itemId: string) => {
-		setMenuState(prev => ({
+		setMenuState((prev) => ({
 			...prev,
 			isOpen: !prev.isOpen || prev.activeItem !== itemId,
 			activeItem: prev.activeItem === itemId ? null : itemId,
@@ -90,7 +94,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	}, []);
 
 	const closeMenu = useCallback(() => {
-		setMenuState(prev => ({ ...prev, isOpen: false, activeItem: null }));
+		setMenuState((prev) => ({ ...prev, isOpen: false, activeItem: null }));
 	}, []);
 
 	const renderMegaMenuContent = (item: NavigationItem) => {
@@ -102,106 +106,114 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 				animate={{ opacity: 1, y: 0 }}
 				exit={{ opacity: 0, y: 10 }}
 				transition={{ duration: 0.2 }}
-				className="absolute top-full left-0 z-50 bg-white shadow-2xl border-t-2 border-blue-600 rounded-b-lg w-full"
-				style={{ minHeight: "400px" }}
+				className="right-0 left-0 z-[60] fixed bg-white shadow-2xl border-t-2 border-blue-600 rounded-b-lg"
+				style={{
+					top: "72px", // Header height
+					minHeight: "400px",
+					width: "100vw",
+				}}
 			>
-				<div className="mx-auto px-6 py-8 container">
-					<div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-						{item.children.map((subItem, index) => {
-							const SubIcon = subItem.icon;
-							return (
-								<motion.div
-									key={subItem.id}
-									initial={{ opacity: 0, y: 20 }}
-									animate={{ opacity: 1, y: 0 }}
-									transition={{ delay: index * 0.05, duration: 0.3 }}
-									className="group"
-								>
-									<div className="mb-4">
-										<Link
-											href={subItem.href}
-											className="flex items-center gap-3 mb-2 font-semibold text-gray-900 hover:text-blue-600 text-lg transition-colors"
-											onClick={closeMenu}
-										>
-											{SubIcon && (
-												<SubIcon className="w-5 h-5 text-blue-600" />
+				<div className="mx-auto container">
+					<div className="py-8">
+						<div className="gap-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+							{item.children.map((subItem, index) => {
+								const SubIcon = subItem.icon;
+								return (
+									<motion.div
+										key={subItem.id}
+										initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ delay: index * 0.05, duration: 0.3 }}
+										className="group"
+									>
+										<div className="mb-4">
+											<Link
+												href={subItem.href || "#"}
+												className="flex items-center gap-3 mb-2 font-semibold text-gray-900 hover:text-blue-600 text-lg transition-colors"
+												onClick={closeMenu}
+											>
+												{SubIcon && (
+													<SubIcon className="w-5 h-5 text-blue-600" />
+												)}
+												{subItem.label}
+											</Link>
+											{subItem.description && (
+												<p className="text-gray-600 text-sm">
+													{subItem.description}
+												</p>
 											)}
-											{subItem.label}
-										</Link>
-										{subItem.description && (
-											<p className="text-gray-600 text-sm">
-												{subItem.description}
-											</p>
-										)}
-									</div>
+										</div>
 
-									{subItem.children && (
-										<ul className="space-y-2">
-											{subItem.children.map((subSubItem) => {
-												const SubSubIcon = subSubItem.icon;
-												return (
-													<li key={subSubItem.id}>
-														<Link
-															href={subSubItem.href}
-															className="flex items-center gap-2 p-2 rounded-md text-gray-700 hover:bg-blue-50 hover:text-blue-700 text-sm transition-colors"
-															onClick={closeMenu}
-														>
-															{SubSubIcon && (
-																<SubSubIcon className="w-4 h-4" />
-															)}
-															<div>
-																<div className="font-medium">
-																	{subSubItem.label}
-																</div>
-																{subSubItem.description && (
-																	<div className="text-gray-500 text-xs">
-																		{subSubItem.description}
-																	</div>
+										{subItem.children && (
+											<ul className="space-y-2">
+												{subItem.children.map((subSubItem) => {
+													const SubSubIcon = subSubItem.icon;
+													return (
+														<li key={subSubItem.id}>
+															<Link
+																href={subSubItem.href || "#"}
+																className="flex items-center gap-2 hover:bg-blue-50 p-2 rounded-md text-gray-700 hover:text-blue-700 text-sm transition-colors"
+																onClick={closeMenu}
+															>
+																{SubSubIcon && (
+																	<SubSubIcon className="w-4 h-4" />
 																)}
-															</div>
-														</Link>
-													</li>
-												);
-											})}
-										</ul>
-									)}
-								</motion.div>
-							);
-						})}
-					</div>
+																<div>
+																	<div className="font-medium">
+																		{subSubItem.label}
+																	</div>
+																	{subSubItem.description && (
+																		<div className="text-gray-500 text-xs">
+																			{subSubItem.description}
+																		</div>
+																	)}
+																</div>
+															</Link>
+														</li>
+													);
+												})}
+											</ul>
+										)}
+									</motion.div>
+								);
+							})}
+						</div>
 
-					{/* Featured Section */}
-					<div className="border-gray-200 mt-8 pt-6 border-t">
-						<div className="gap-6 grid grid-cols-1 md:grid-cols-2">
-							<div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
-								<h4 className="mb-2 font-semibold text-blue-900">
-									Popüler Kaynaklar
-								</h4>
-								<p className="mb-3 text-blue-700 text-sm">
-									En çok beğenilen {item.label.toLowerCase()} kaynaklarını keşfedin
-								</p>
-								<Link
-									href={`/resources?category=${item.id}&sort=popular`}
-									className="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 text-sm transition-colors"
-									onClick={closeMenu}
-								>
-									Popüler Kaynakları Gör →
-								</Link>
-							</div>
-							<div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
-								<h4 className="mb-2 font-semibold text-green-900">
-									Yeni Eklenenler
-								</h4>
-								<p className="mb-3 text-green-700 text-sm">
-									Son eklenen {item.label.toLowerCase()} materyallerini inceleyin
-								</p>
-								<Link
-									href={`/resources?category=${item.id}&sort=newest`}
-									className="inline-flex items-center font-medium text-green-600 hover:text-green-800 text-sm transition-colors"
-									onClick={closeMenu}
-								>
-									Yeni Kaynakları Gör →
-								</Link>
+						{/* Featured Section */}
+						<div className="mt-8 pt-6 border-gray-200 border-t">
+							<div className="gap-6 grid grid-cols-1 md:grid-cols-2">
+								<div className="bg-gradient-to-r from-blue-50 to-blue-100 p-4 rounded-lg">
+									<h4 className="mb-2 font-semibold text-blue-900">
+										Popüler Kaynaklar
+									</h4>
+									<p className="mb-3 text-blue-700 text-sm">
+										En çok beğenilen {item.label.toLowerCase()} kaynaklarını
+										keşfedin
+									</p>
+									<Link
+										href={`/resources?category=${item.id}&sort=popular`}
+										className="inline-flex items-center font-medium text-blue-600 hover:text-blue-800 text-sm transition-colors"
+										onClick={closeMenu}
+									>
+										Popüler Kaynakları Gör →
+									</Link>
+								</div>
+								<div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+									<h4 className="mb-2 font-semibold text-green-900">
+										Yeni Eklenenler
+									</h4>
+									<p className="mb-3 text-green-700 text-sm">
+										Son eklenen {item.label.toLowerCase()} materyallerini
+										inceleyin
+									</p>
+									<Link
+										href={`/resources?category=${item.id}&sort=newest`}
+										className="inline-flex items-center font-medium text-green-600 hover:text-green-800 text-sm transition-colors"
+										onClick={closeMenu}
+									>
+										Yeni Kaynakları Gör →
+									</Link>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -239,6 +251,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 									{item.children ? (
 										<div>
 											<button
+												type="button"
 												onClick={() => handleClick(item.id)}
 												className="flex justify-between items-center py-2 w-full font-medium text-gray-900 text-left"
 												aria-expanded={menuState.activeItem === item.id}
@@ -246,9 +259,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 												{item.label}
 												<ChevronDown
 													className={`w-4 h-4 transition-transform ${
-														menuState.activeItem === item.id
-															? "rotate-180"
-															: ""
+														menuState.activeItem === item.id ? "rotate-180" : ""
 													}`}
 												/>
 											</button>
@@ -259,12 +270,12 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 														animate={{ opacity: 1, height: "auto" }}
 														exit={{ opacity: 0, height: 0 }}
 														transition={{ duration: 0.2 }}
-														className="ml-4 mt-2 space-y-2 overflow-hidden"
+														className="space-y-2 mt-2 ml-4 overflow-hidden"
 													>
 														{item.children.map((subItem) => (
 															<Link
 																key={subItem.id}
-																href={subItem.href}
+																href={subItem.href || "#"}
 																className="block py-2 text-gray-600 hover:text-blue-600 transition-colors"
 																onClick={closeMenu}
 															>
@@ -277,7 +288,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 										</div>
 									) : (
 										<Link
-											href={item.href!}
+											href={item.href || "#"}
 											className="block py-2 font-medium text-gray-900 hover:text-blue-600 transition-colors"
 											onClick={closeMenu}
 										>
@@ -292,7 +303,10 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 						<div className="mt-6 pt-6 border-t">
 							{isLoggedIn ? (
 								<div className="space-y-2">
-									<Button asChild className="bg-blue-600 hover:bg-blue-700 w-full">
+									<Button
+										asChild
+										className="bg-blue-600 hover:bg-blue-700 w-full"
+									>
 										<Link href="/upload" onClick={closeMenu}>
 											Kaynak Yükle
 										</Link>
@@ -310,7 +324,10 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 											Giriş Yap
 										</Link>
 									</Button>
-									<Button asChild className="bg-blue-600 hover:bg-blue-700 w-full">
+									<Button
+										asChild
+										className="bg-blue-600 hover:bg-blue-700 w-full"
+									>
 										<Link href="/register" onClick={closeMenu}>
 											Kayıt Ol
 										</Link>
@@ -325,9 +342,13 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	);
 
 	return (
-		<div ref={menuRef} className="relative">
+		<div
+			ref={menuRef}
+			className="static md:static relative w-full"
+			onMouseLeave={handleMouseLeave}
+		>
 			{/* Desktop Navigation */}
-			<nav className="hidden md:flex items-center space-x-8">
+			<nav className="hidden md:flex justify-center items-center space-x-8">
 				{navigationData.map((item) => {
 					const isActive = menuState.activeItem === item.id;
 					const Icon = item.icon;
@@ -337,10 +358,10 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 							key={item.id}
 							className="relative"
 							onMouseEnter={() => item.children && handleMouseEnter(item.id)}
-							onMouseLeave={() => item.children && handleMouseLeave()}
 						>
 							{item.children ? (
 								<button
+									type="button"
 									onClick={() => handleClick(item.id)}
 									className={`flex items-center gap-1 px-3 py-2 font-medium transition-colors rounded-md ${
 										isActive
@@ -360,8 +381,8 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 								</button>
 							) : (
 								<Link
-									href={item.href!}
-									className="flex items-center gap-1 px-3 py-2 font-medium text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+									href={item.href || "#"}
+									className="flex items-center gap-1 hover:bg-blue-50 px-3 py-2 rounded-md font-medium text-gray-700 hover:text-blue-600 transition-colors"
 								>
 									{Icon && <Icon className="w-4 h-4" />}
 									{item.label}
@@ -381,8 +402,11 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 
 			{/* Mobile Menu Button */}
 			<button
-				onClick={() => setMenuState(prev => ({ ...prev, isOpen: !prev.isOpen }))}
-				className="md:hidden flex items-center justify-center p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+				type="button"
+				onClick={() =>
+					setMenuState((prev) => ({ ...prev, isOpen: !prev.isOpen }))
+				}
+				className="md:hidden flex justify-center items-center hover:bg-blue-50 p-2 rounded-md text-gray-700 hover:text-blue-600 transition-colors"
 				aria-label="Toggle menu"
 				aria-expanded={menuState.isOpen}
 			>

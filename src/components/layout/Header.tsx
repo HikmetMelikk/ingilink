@@ -26,6 +26,7 @@ export function Header() {
 						initial={{ opacity: 0, x: -20 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ delay: 0.2, duration: 0.5 }}
+						className="w-[140px]"
 					>
 						<Link
 							href="/"
@@ -37,17 +38,19 @@ export function Header() {
 
 					{/* Desktop Navigation - Centered */}
 					<motion.div
-						className="hidden left-1/2 absolute md:block -translate-x-1/2 transform"
+						className="flex flex-1 justify-center"
 						initial={{ opacity: 0, y: -10 }}
 						animate={{ opacity: 1, y: 0 }}
 						transition={{ delay: 0.3, duration: 0.5 }}
 					>
-						<MegaMenu isLoggedIn={isLoggedIn} />
+						<div className="hidden md:block">
+							<MegaMenu isLoggedIn={isLoggedIn} />
+						</div>
 					</motion.div>
 
 					{/* Right Side - Search & Auth */}
 					<motion.div
-						className="flex items-center space-x-4"
+						className="flex justify-end items-center space-x-4 w-[140px]"
 						initial={{ opacity: 0, x: 20 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ delay: 0.4, duration: 0.5 }}
