@@ -2,6 +2,7 @@
 
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { MobileFilterDrawer } from "@/components/resources/MobileFilterDrawer";
 import { ResourceCard } from "@/components/resources/ResourceCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,7 +25,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { Resource, ResourceFilters, ViewMode } from "@/types/resource";
 import { AnimatePresence, motion } from "framer-motion";
-import { BookOpen, Filter, Grid3X3, List, Search, X } from "lucide-react";
+import { BookOpen, Filter, Grid3X3, List, Search, X, Menu } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 // Mock data - gerçek uygulamada API'den gelecek
@@ -240,6 +241,7 @@ const filterAndSortResources = (
 
 export default function ResourcesPage() {
 	const [showFilters, setShowFilters] = useState(false);
+	const [showMobileFilters, setShowMobileFilters] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [viewMode, setViewMode] = useState<ViewMode>("grid");
@@ -343,6 +345,11 @@ export default function ResourcesPage() {
 		console.log(`Toggle favorite for resource ${id}`);
 	};
 
+	const handleApplyFilters = () => {
+		// Filtreleri uygula - gerçek uygulamada API çağrısı yapılacak
+		console.log("Applying filters:", filters);
+	};
+
 	return (
 		<motion.div
 			className="flex flex-col min-h-screen"
@@ -393,8 +400,31 @@ export default function ResourcesPage() {
 
 							{/* Controls */}
 							<div className="flex items-center gap-4">
+								{/* Mobile Filter Button */}
+								<div className="md:hidden">
+									<motion.div
+										whileHover={{ scale: 1.02 }}
+										whileTap={{ scale: 0.98 }}
+									>
+										<Button
+											variant="outline"
+											onClick={() => setShowMobileFilters(true)}
+											className={cn(
+												"flex items-center gap-2",
+												hasActiveFilters && "border-blue-500 text-blue-600 bg-blue-50"
+											)}
+										>
+											<Menu className="w-4 h-4" />
+											Filtreler
+											{hasActiveFilters && (
+												<span className="bg-blue-500 rounded-full w-2 h-2" />
+											)}
+										</Button>
+									</motion.div>
+								</div>
+
 								{/* View Mode Toggle */}
-								<div className="flex border rounded-md overflow-hidden">
+								<div className="hidden sm:flex border rounded-md overflow-hidden">
 									<motion.button
 										onClick={() => setViewMode("grid")}
 										className={cn(
@@ -442,6 +472,7 @@ export default function ResourcesPage() {
 
 								{/* Filter Toggle */}
 								<motion.div
+									className="hidden md:block"
 									whileHover={{ scale: 1.02 }}
 									whileTap={{ scale: 0.98 }}
 								>
@@ -492,7 +523,7 @@ export default function ResourcesPage() {
 						<AnimatePresence>
 							{showFilters && (
 								<motion.div
-									className="hidden lg:block w-80"
+									className="hidden md:block w-80"
 									initial={{ opacity: 0, x: -50 }}
 									animate={{ opacity: 1, x: 0 }}
 									exit={{ opacity: 0, x: -50 }}
@@ -900,6 +931,19 @@ export default function ResourcesPage() {
 					</div>
 				</div>
 			</main>
+			
+			{/* Mobile Filter Drawer */}
+			<MobileFilterDrawer
+				isOpen={showMobileFilters}
+				onClose={() => setShowMobileFilters(false)}
+				filters={filters}
+				onFilterChange={handleFilterChange}
+				onApplyFilters={handleApplyFilters}
+				onClearFilters={clearFilters}
+				hasActiveFilters={hasActiveFilters}
+				resultCount={filteredResources.length}
+			/>
+			
 			<Footer />
 		</motion.div>
 	);
