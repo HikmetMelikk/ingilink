@@ -58,6 +58,19 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 		return () => document.removeEventListener("keydown", handleKeyDown);
 	}, []);
 
+	// Prevent body scroll when menu is open
+	useEffect(() => {
+		if (menuState.isOpen) {
+			document.body.style.overflow = "hidden";
+		} else {
+			document.body.style.overflow = "unset";
+		}
+
+		return () => {
+			document.body.style.overflow = "unset";
+		};
+	}, [menuState.isOpen]);
+
 	const handleMouseEnter = useCallback((itemId: string) => {
 		if (timeoutRef.current) {
 			clearTimeout(timeoutRef.current);
@@ -106,10 +119,10 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 				animate={{ opacity: 1, y: 0 }}
 				exit={{ opacity: 0, y: 10 }}
 				transition={{ duration: 0.2 }}
-				className="right-0 left-0 z-[60] fixed bg-white shadow-2xl border-t-2 border-blue-600 rounded-b-lg"
+				className="right-0 left-0 z-[60] fixed bg-white shadow-2xl border-t-2 border-blue-600 rounded-b-lg overflow-y-auto"
 				style={{
 					top: "72px", // Header height
-					minHeight: "400px",
+					maxHeight: "calc(100vh - 72px)", // Viewport height minus header height
 					width: "100vw",
 				}}
 			>
@@ -344,7 +357,7 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 	return (
 		<div
 			ref={menuRef}
-			className="static md:static relative w-full"
+			className="md:static relative w-full"
 			onMouseLeave={handleMouseLeave}
 		>
 			{/* Desktop Navigation */}
