@@ -2,9 +2,8 @@
 
 import { MegaMenu } from "@/components/layout/MegaMenu";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
-import { Search, Upload, User } from "lucide-react";
+import { Upload, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -55,19 +54,6 @@ export function Header() {
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ delay: 0.4, duration: 0.5 }}
 					>
-						{/* Search Bar - Desktop */}
-						<div className="hidden lg:flex items-center">
-							<div className="relative">
-								<Search className="top-1/2 left-3 absolute w-4 h-4 text-gray-400 -translate-y-1/2 transform" />
-								<Input
-									placeholder="Kaynak ara..."
-									value={searchQuery}
-									onChange={(e) => setSearchQuery(e.target.value)}
-									className="pl-10 w-64 focus:w-80 transition-all duration-300"
-								/>
-							</div>
-						</div>
-
 						{/* Auth Buttons - Desktop */}
 						<div className="hidden md:flex items-center space-x-2">
 							{isLoggedIn ? (

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { navigationData } from "@/lib/navigation-data";
 import type { MegaMenuState, NavigationItem } from "@/types/navigation";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, Search, X } from "lucide-react";
+import { ChevronDown, Search } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -412,27 +412,6 @@ export function MegaMenu({ isLoggedIn = false }: MegaMenuProps) {
 					);
 				})}
 			</nav>
-
-			{/* Mobile Menu Button */}
-			<button
-				type="button"
-				onClick={() =>
-					setMenuState((prev) => ({ ...prev, isOpen: !prev.isOpen }))
-				}
-				className="md:hidden flex justify-center items-center hover:bg-blue-50 p-2 rounded-md text-gray-700 hover:text-blue-600 transition-colors"
-				aria-label="Toggle menu"
-				aria-expanded={menuState.isOpen}
-			>
-				{menuState.isOpen ? (
-					<X className="w-5 h-5" />
-				) : (
-					<div className="space-y-1">
-						<div className="bg-current rounded-full w-5 h-0.5" />
-						<div className="bg-current rounded-full w-5 h-0.5" />
-						<div className="bg-current rounded-full w-5 h-0.5" />
-					</div>
-				)}
-			</button>
 
 			{/* Mobile Menu */}
 			{renderMobileMenu()}

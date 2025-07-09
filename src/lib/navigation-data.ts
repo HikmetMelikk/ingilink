@@ -1,22 +1,25 @@
-import { 
-	BookOpen, 
-	Volume2, 
-	Eye, 
-	PenTool, 
-	Mic, 
-	MessageCircle,
-	Headphones,
-	FileText,
-	Video,
-	Users,
-	Trophy,
-	Clock,
-	Star,
-	Zap,
-	Target,
-	Globe
-} from "lucide-react";
 import type { NavigationItem } from "@/types/navigation";
+import {
+	BookOpen,
+	Clock,
+	Compass,
+	Eye,
+	FileText,
+	Globe,
+	Headphones,
+	Info,
+	MessageCircle,
+	Mic,
+	PenTool,
+	Star,
+	Target,
+	Trophy,
+	Users,
+	Users2,
+	Video,
+	Volume2,
+	Zap,
+} from "lucide-react";
 
 export const navigationData: NavigationItem[] = [
 	{
@@ -37,30 +40,30 @@ export const navigationData: NavigationItem[] = [
 						label: "Podcasts",
 						href: "/resources/listening/podcasts",
 						description: "İngilizce podcast'ler",
-						icon: Headphones
+						icon: Headphones,
 					},
 					{
 						id: "audiobooks",
 						label: "Audiobooks",
 						href: "/resources/listening/audiobooks",
 						description: "Sesli kitaplar",
-						icon: BookOpen
+						icon: BookOpen,
 					},
 					{
 						id: "conversations",
 						label: "Conversations",
 						href: "/resources/listening/conversations",
 						description: "Günlük konuşmalar",
-						icon: Users
+						icon: Users,
 					},
 					{
 						id: "ielts-listening",
 						label: "IELTS Listening",
 						href: "/resources/listening/ielts",
 						description: "IELTS dinleme testleri",
-						icon: Trophy
-					}
-				]
+						icon: Trophy,
+					},
+				],
 			},
 			{
 				id: "reading",
@@ -74,30 +77,30 @@ export const navigationData: NavigationItem[] = [
 						label: "Articles",
 						href: "/resources/reading/articles",
 						description: "İngilizce makaleler",
-						icon: FileText
+						icon: FileText,
 					},
 					{
 						id: "short-stories",
 						label: "Short Stories",
 						href: "/resources/reading/stories",
 						description: "Kısa hikayeler",
-						icon: BookOpen
+						icon: BookOpen,
 					},
 					{
 						id: "news",
 						label: "News",
 						href: "/resources/reading/news",
 						description: "Güncel haberler",
-						icon: Globe
+						icon: Globe,
 					},
 					{
 						id: "ielts-reading",
 						label: "IELTS Reading",
 						href: "/resources/reading/ielts",
 						description: "IELTS okuma testleri",
-						icon: Trophy
-					}
-				]
+						icon: Trophy,
+					},
+				],
 			},
 			{
 				id: "writing",
@@ -111,30 +114,30 @@ export const navigationData: NavigationItem[] = [
 						label: "Essays",
 						href: "/resources/writing/essays",
 						description: "Deneme yazıları",
-						icon: FileText
+						icon: FileText,
 					},
 					{
 						id: "business-writing",
 						label: "Business Writing",
 						href: "/resources/writing/business",
 						description: "İş yazışmaları",
-						icon: Target
+						icon: Target,
 					},
 					{
 						id: "creative-writing",
 						label: "Creative Writing",
 						href: "/resources/writing/creative",
 						description: "Yaratıcı yazım",
-						icon: Star
+						icon: Star,
 					},
 					{
 						id: "ielts-writing",
 						label: "IELTS Writing",
 						href: "/resources/writing/ielts",
 						description: "IELTS yazma testleri",
-						icon: Trophy
-					}
-				]
+						icon: Trophy,
+					},
+				],
 			},
 			{
 				id: "speaking",
@@ -148,30 +151,30 @@ export const navigationData: NavigationItem[] = [
 						label: "Pronunciation",
 						href: "/resources/speaking/pronunciation",
 						description: "Telaffuz çalışmaları",
-						icon: Volume2
+						icon: Volume2,
 					},
 					{
 						id: "conversation-practice",
 						label: "Conversation Practice",
 						href: "/resources/speaking/conversation",
 						description: "Konuşma pratiği",
-						icon: Users
+						icon: Users,
 					},
 					{
 						id: "presentation-skills",
 						label: "Presentation Skills",
 						href: "/resources/speaking/presentations",
 						description: "Sunum becerileri",
-						icon: Video
+						icon: Video,
 					},
 					{
 						id: "ielts-speaking",
 						label: "IELTS Speaking",
 						href: "/resources/speaking/ielts",
 						description: "IELTS konuşma testleri",
-						icon: Trophy
-					}
-				]
+						icon: Trophy,
+					},
+				],
 			},
 			{
 				id: "vocabulary",
@@ -185,30 +188,30 @@ export const navigationData: NavigationItem[] = [
 						label: "Daily Words",
 						href: "/resources/vocabulary/daily",
 						description: "Günlük kelimeler",
-						icon: Clock
+						icon: Clock,
 					},
 					{
 						id: "business-vocabulary",
 						label: "Business Vocabulary",
 						href: "/resources/vocabulary/business",
 						description: "İş dünyası kelimeleri",
-						icon: Target
+						icon: Target,
 					},
 					{
 						id: "academic-vocabulary",
 						label: "Academic Vocabulary",
 						href: "/resources/vocabulary/academic",
 						description: "Akademik kelimeler",
-						icon: BookOpen
+						icon: BookOpen,
 					},
 					{
 						id: "phrasal-verbs",
 						label: "Phrasal Verbs",
 						href: "/resources/vocabulary/phrasal-verbs",
 						description: "Deyimsel fiiller",
-						icon: Zap
-					}
-				]
+						icon: Zap,
+					},
+				],
 			},
 			{
 				id: "grammar",
@@ -222,49 +225,52 @@ export const navigationData: NavigationItem[] = [
 						label: "Basic Grammar",
 						href: "/resources/grammar/basic",
 						description: "Temel dilbilgisi",
-						icon: BookOpen
+						icon: BookOpen,
 					},
 					{
 						id: "advanced-grammar",
 						label: "Advanced Grammar",
 						href: "/resources/grammar/advanced",
 						description: "İleri seviye dilbilgisi",
-						icon: Star
+						icon: Star,
 					},
 					{
 						id: "tenses",
 						label: "Tenses",
 						href: "/resources/grammar/tenses",
 						description: "Zamanlar",
-						icon: Clock
+						icon: Clock,
 					},
 					{
 						id: "conditionals",
 						label: "Conditionals",
 						href: "/resources/grammar/conditionals",
 						description: "Koşul cümleleri",
-						icon: Target
-					}
-				]
-			}
-		]
+						icon: Target,
+					},
+				],
+			},
+		],
 	},
 	{
 		id: "discover",
 		label: "Keşfet",
 		href: "/discover",
-		description: "Yeni kaynakları keşfedin"
+		description: "Yeni kaynakları keşfedin",
+		icon: Compass,
 	},
 	{
 		id: "about",
 		label: "Hakkımızda",
 		href: "/about",
-		description: "ingilink hakkında bilgi edinin"
+		description: "ingilink hakkında bilgi edinin",
+		icon: Info,
 	},
 	{
 		id: "community",
 		label: "Topluluk",
 		href: "/community",
-		description: "Öğrenci topluluğuna katılın"
-	}
+		description: "Öğrenci topluluğuna katılın",
+		icon: Users2,
+	},
 ];
